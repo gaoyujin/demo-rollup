@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/node": "^20.12.6",
     "rimraf": "^5.0.5",
@@ -22,6 +23,7 @@
     "typescript": "^5.4.4"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "log4js": "^6.9.1"
   }
 }
