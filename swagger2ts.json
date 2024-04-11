@@ -1,10 +1,10 @@
 {
   "includePaths": [],
   "excludePaths": [],
-  "nameSettings": [
+  "serverNameSettings": [
     {
-      "name": "盛心付PC版BFF",
-      "fileName": "testServer"
+      "name": "达人交付服务",
+      "fileName": "ScheduleServer"
     }
   ]
 }

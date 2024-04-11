@@ -13,3 +13,9 @@ export enum ParameterType {
   file = 'file',
   object='object'
 }
+
+export enum ContentStyle {
+  all = 'all',
+  onlyModel = 'onlyModel',
+  onlyApi='onlyApi'
+}

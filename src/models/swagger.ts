@@ -62,6 +62,6 @@ export type Swagger = {
   host: string;
   basePath: string;
   tags: SwaggerTag[];
-  paths: Record<string, SwaggerMethod>;
+  paths: Record<string, Record<string, SwaggerMethod>>;
   definitions: Record<string, DefinitionInfo>;
 }
