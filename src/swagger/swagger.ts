@@ -1,13 +1,15 @@
-import { logger } from './../utils/log';
 import { Swagger, SwaggerInfo } from '../models/swagger'
 import { DefineConfig } from '../models/swaggerConfig'
 import { ContentStyle } from '../models/swaggerEnum'
 // import { logger } from '../utils/log'
-import { createFile, makeDirSync } from '../utils/file'
+import { accessFile, makeDirSync } from '../utils/file'
 import axios from 'axios'
 import path from 'path'
-import fs from 'fs'
-import {getControllerPaths} from './swaggerPaths'
+import {
+  getControllerPaths,
+  getModelContent,
+  processRefItem,
+} from './swaggerPaths'
 
 // 获取真正的swaggerUrl
 export const getSwaggerUrl = (url: string, configData: DefineConfig) => {
@@ -144,6 +146,36 @@ export const createServiceDir = (
   return true
 }
 
+// 根据tags，整理数据
+export const getTagsData = (swaggerInfo: Swagger, configData: DefineConfig) => {
+  const pathsType: string[] = []
+  const pathNamesType: string[] = []
+  const result = {
+    paths: pathsType,
+    pathNames: pathNamesType,
+  }
+
+  // 获取tags路径
+  for (let i = 0; i < swaggerInfo.tags.length; i++) {
+    const item = swaggerInfo.tags[i]
+    if (!item.description) {
+      console.error('swagger tags.description is empty, i=' + i)
+      continue
+    }
+
+    const arrStr = item.description.split(' ')
+
+    // 设置tag的对象
+    getControllerPaths(swaggerInfo, configData, item.name)
+
+    // 创建controller的路径
+    result.paths.push(arrStr.join('') + '.ts')
+    result.pathNames.push(item.name)
+  }
+
+  return result
+}
+
 // 创建服务文件
 export const createServiceFile = (
   swaggerInfo: Swagger,
@@ -155,27 +187,18 @@ export const createServiceFile = (
     return false
   }
 
-  const paths = []
-  // 获取tags路径
-  for (let i = 0; i < swaggerInfo.tags.length; i++) {
-    const item = swaggerInfo.tags[i]
-    if (!item.description) {
-      console.error('swagger tags.description is empty, i=' + i)
-      continue
-    }
+  // 根据tags，整理数据
+  const tagsResult = getTagsData(swaggerInfo, configData)
+  const paths = tagsResult.paths
+  const pathNames = tagsResult.pathNames
+  //logger.info('runDataInfo:', JSON.stringify(configData.runDataInfo))
 
-    // 设置tag的对象
-    getControllerPaths(swaggerInfo,configData,item.name)
-    
-    // 创建controller的路径
-    const arrStr = item.description.split(' ')
-    paths.push(arrStr.join('') + '.ts')
-  }
-
-  logger.info('runDataInfo:', JSON.stringify(configData.runDataInfo))
+  // 处理关联实体的数据
+  processRefItem(swaggerInfo)
 
   for (let i = 0; i < paths.length; i++) {
-    const pathStr = paths[i]
+    const pathStr = paths[i] // controller的英文名称
+    const pathNameStr = pathNames[i] // controller的名称
 
     // 创建实体的文件
     if (
@@ -183,22 +206,12 @@ export const createServiceFile = (
       configData.fileSettings?.content === ContentStyle.all ||
       configData.fileSettings?.content === ContentStyle.onlyModel
     ) {
+      // controller的实体路径
       const fileDir = configData.runDataInfo!.modelPath + path.sep + pathStr
-      try {
-        // 异步检查
-        fs.access(fileDir, fs.constants.F_OK, (err) => {
-          if (err) {
-            console.error('文件或目录不存在')
-            createFile(fileDir, 'AAAA')
-            return
-          }
-          // 文件或目录存在
-          console.log('文件或目录存在')
-          createFile(fileDir, 'BBBB')
-        })
-      } catch (err) {
-        console.error('文件或目录不存在')
-      }
+      // 获取实体文件
+      const content = getModelContent(swaggerInfo, configData, pathNameStr)
+      // 创建实体文件
+      accessFile(fileDir, content, configData)
     }
 
     // 创建api的文件

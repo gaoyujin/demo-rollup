@@ -1,0 +1,6 @@
+/** <%=data.summary %> <%=method %> <%=url %> */
+export type <%= title %> = { <% for (let i = 0; i < Object.keys(definition.properties).length;
+i++) { %> 
+  /* <%- definition.properties[Object.keys(definition.properties)[i]].description %> */
+  <%= Object.keys(definition.properties)[i] %>: <%- definition.properties[Object.keys(definition.properties)[i]].$ref ? definition.properties[Object.keys(definition.properties)[i]].$refType : definition.properties[Object.keys(definition.properties)[i]].type === 'integer' ? 'number' : definition.properties[Object.keys(definition.properties)[i]].type === 'array' ? definition.properties[Object.keys(definition.properties)[i]].items['type'] + '[]' : definition.properties[Object.keys(definition.properties)[i]].type %>;  <% } %> 
+};

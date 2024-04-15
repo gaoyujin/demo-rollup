@@ -38,5 +38,5 @@ export type ApiConfig = {
 export type RunData = {
   modelPath?: string;
   apiPath?: string;
-  tagAndPath?:Record<string, Record<string, SwaggerMethod>[]>,
+  tagAndPath?:Record<string,Record<string, Record<string, SwaggerMethod>>[]>,
 }

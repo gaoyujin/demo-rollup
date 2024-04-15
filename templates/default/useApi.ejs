@@ -1,0 +1,20 @@
+/**
+ * <%=data.summary %>
+ * @param data 
+ * @param config 
+ * @returns Promise<<%=data.responses %>>
+ */
+export const use<%=data.title %> = async (data: <%=data.parData %>, config?: any): Promise<<%=data.responses %>> => {
+  try {
+    const result = await <%=data.methodTitle %>(data, config);
+    if (result.resultCode.toUpperCase() != "SUCCESS") {
+      errorMessage("<%=data.summary %>失败，原因：" + result.errorCodeDes);
+      return null;
+    } else {
+      return result;
+    }
+  } catch (e) {
+    errorMessage("<%=data.summary %>失败，信息：" + e.message);
+    return null;
+  }
+};
