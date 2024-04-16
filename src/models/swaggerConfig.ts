@@ -36,7 +36,7 @@ export type ApiConfig = {
 
 // 运行生成的数据
 export type RunData = {
-  modelPath?: string;
-  apiPath?: string;
-  tagAndPath?:Record<string,Record<string, Record<string, SwaggerMethod>>[]>,
+  modelPath?: string
+  apiPath?: string
+  tagAndPath?: Record<string, Record<string, Record<string, SwaggerMethod>>[]>
 }

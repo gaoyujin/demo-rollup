@@ -1,4 +1,6 @@
+import ejs from 'ejs'
 import {
+  ApiCacheData,
   DataCache,
   MethodPath,
   Swagger,
@@ -7,6 +9,7 @@ import {
 import { DefineConfig } from '../models/swaggerConfig'
 import { ParameterIn } from '../models/swaggerEnum'
 import { getParameterInfo, getResponseInfo } from './swaggerDefinitions'
+import { getApiTemp } from './template'
 
 // 根据tag，获取controller的path
 export const getControllerPaths = (
@@ -97,11 +100,31 @@ export const createParameterModel = (methodPath: MethodPath): string => {
   return content
 }
 
+// 初始化API的参数内容
+export const initApiParameter = (methodPath: MethodPath): ApiCacheData => {
+  const apiCache: ApiCacheData = {
+    summary: '',
+    url: '',
+    method: '',
+    methodTitle: '',
+    parameters: [],
+    responseName: '',
+  }
+
+  apiCache.method = methodPath.method
+  apiCache.url = methodPath.url
+  apiCache.summary = methodPath.data!.summary
+  apiCache.methodTitle = methodPath.data!.operationId.split('Using')[0]
+
+  return apiCache
+}
+
 // 根据path，生成model内容
 export const getModelContent = (
   swaggerInfo: Swagger,
   configData: DefineConfig,
-  pathName: string
+  pathName: string,
+  cacheApiData: Record<string, ApiCacheData>[]
 ): string => {
   if (!configData.runDataInfo?.tagAndPath) {
     console.error('tagAndPath is null')
@@ -128,9 +151,10 @@ export const getModelContent = (
   for (let i = 0; i < listMethods.length; i++) {
     const methodInfo = listMethods[i]
     const methodPath = setPathData(methodInfo)
+    const apiCache = initApiParameter(methodPath)
 
     // 获取参数的实体信息
-    getParameterInfo(swaggerInfo, methodPath, cache)
+    getParameterInfo(swaggerInfo, methodPath, cache, apiCache)
     if (
       methodPath.data &&
       methodPath.data.parameters &&
@@ -145,7 +169,7 @@ export const getModelContent = (
     }
 
     // 获取返回的实体信息
-    getResponseInfo(swaggerInfo, methodPath, cache)
+    getResponseInfo(swaggerInfo, methodPath, cache, apiCache)
     if (
       methodPath.data &&
       methodPath.data.responses &&
@@ -159,6 +183,12 @@ export const getModelContent = (
         }
       }
     }
+
+    // 记录接口的参数和返回信息
+    const tempApi: Record<string, ApiCacheData> = {}
+    const strKey = apiCache.url as string
+    tempApi[strKey] = apiCache
+    cacheApiData.push(tempApi)
   }
   return resultParameterHtml + resultResponseHtml
 }
@@ -229,4 +259,63 @@ export const processRefItem = (swaggerInfo: Swagger) => {
       }
     }
   }
+}
+
+// 根据path，生成Api内容
+export const getApiContent = (
+  swaggerInfo: Swagger,
+  configData: DefineConfig,
+  pathName: string,
+  cacheApiData: Record<string, ApiCacheData>[]
+): string => {
+  if (!configData.runDataInfo?.tagAndPath) {
+    console.error('tagAndPath is null')
+    return ''
+  }
+
+  if (!configData.runDataInfo?.tagAndPath[pathName]) {
+    console.error('tagAndPath property [' + pathName + '] is null')
+    return ''
+  }
+
+  const listMethods = configData.runDataInfo?.tagAndPath[pathName]
+  if (!listMethods || listMethods.length < 1) {
+    console.error('paths [' + pathName + '] is null')
+    return ''
+  }
+
+  let resultHtml = ''
+  for (let i = 0; i < listMethods.length; i++) {
+    const methodInfo = listMethods[i]
+    const methodPath = setPathData(methodInfo)
+
+    if (!cacheApiData) {
+      console.error('cacheApiData is null')
+      break
+    }
+
+    // 找到接口的参数和返回信息
+    const findItem = cacheApiData.find(
+      (item) => Object.keys(item)[0] === methodPath.url
+    )
+
+    if (!findItem) {
+      console.error('ApiCacheData is not find')
+      continue
+    }
+
+    const apiData = findItem[Object.keys(findItem)[0]]
+    if (!apiData) {
+      console.error('apiData is not find')
+      continue
+    }
+
+    const fileTemp = getApiTemp()
+    const strHtml = ejs.render(fileTemp, {
+      data: apiData,
+    })
+
+    resultHtml = resultHtml + strHtml
+  }
+  return resultHtml
 }

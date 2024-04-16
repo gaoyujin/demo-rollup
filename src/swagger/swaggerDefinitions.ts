@@ -1,4 +1,9 @@
-import { DataCache, DefinitionInfo, ResponseInfo } from './../models/swagger'
+import {
+  ApiCacheData,
+  DataCache,
+  DefinitionInfo,
+  ResponseInfo,
+} from './../models/swagger'
 import { MethodPath, Swagger, SwaggerParameter } from '../models/swagger'
 import { ParameterIn } from '../models/swaggerEnum'
 import { getModelTemp } from './template'
@@ -8,7 +13,8 @@ import ejs from 'ejs'
 export const getParameterInfo = (
   swaggerInfo: Swagger,
   methodPath: MethodPath,
-  cache: DataCache
+  cache: DataCache,
+  apiCache: ApiCacheData
 ) => {
   if (!methodPath.data) {
     console.error(methodPath.url, 'methodPath.data is null')
@@ -38,7 +44,7 @@ export const getParameterInfo = (
 
     // body 类型的参数
     if (params.in === ParameterIn.body && params.schema) {
-      getParameterSchema(params, swaggerInfo, methodPath, cache)
+      getParameterSchema(params, swaggerInfo, methodPath, cache, apiCache)
     }
   }
 
@@ -50,7 +56,8 @@ export const getParameterSchema = (
   parameter: SwaggerParameter,
   swaggerInfo: Swagger,
   methodPath: MethodPath,
-  cache: DataCache
+  cache: DataCache,
+  apiCache: ApiCacheData
 ) => {
   if (!parameter.schema) {
     return
@@ -75,6 +82,14 @@ export const getParameterSchema = (
     // 独立实体
   } else {
     cache.parameters.push(parameterName)
+
+    // 缓存后，给API使用
+    apiCache.parameters!.push({
+      required: parameter.required,
+      name: parameter.name,
+      model: parameterName,
+    })
+
     getParameterContent(
       parameterName,
       parameter,
@@ -109,7 +124,6 @@ export const getParameterContent = (
   if (!parameter.schemaContent) {
     parameter.schemaContent = ''
   }
-
   const fileTemp = getModelTemp()
   const strHtml = ejs.render(fileTemp, {
     url: methodPath.url,
@@ -197,7 +211,8 @@ export const setParameterDefinitionRef = (
 export const getResponseInfo = (
   swaggerInfo: Swagger,
   methodPath: MethodPath,
-  cache: DataCache
+  cache: DataCache,
+  apiCache: ApiCacheData
 ) => {
   if (!methodPath.data) {
     console.error(methodPath.url, 'methodPath.data is null')
@@ -215,11 +230,34 @@ export const getResponseInfo = (
 
     // 返回的实体对象
     if (response.schema && key === '200') {
+      // 缓存后，给API使用
+      apiCache.responseName = setApiResponseName(response)
+
       getResponseSchema(response, swaggerInfo, methodPath, cache)
     }
   }
 
   return
+}
+
+// 设置接口的返回对象名称
+export const setApiResponseName = (response: ResponseInfo) => {
+  if (!response.schema) {
+    return ''
+  }
+
+  const refStr = response.schema.$ref
+  if (!refStr) {
+    return ''
+  }
+
+  // 获取参数名称
+  const responseName = refStr.split('/').pop()
+  if (responseName) {
+    return getResponseName(responseName)
+  }
+
+  return ''
 }
 
 // 返回的实体对象
@@ -309,7 +347,7 @@ export const getResponseContent = (
 }
 
 // 处理返回体的名字
-const getResponseName = (responseName: string) => {
+export const getResponseName = (responseName: string) => {
   const strArr = responseName.split('«')
 
   if (!strArr || strArr.length < 1) {

@@ -1,4 +1,4 @@
-import { Swagger, SwaggerInfo } from '../models/swagger'
+import { ApiCacheData, Swagger, SwaggerInfo } from '../models/swagger'
 import { DefineConfig } from '../models/swaggerConfig'
 import { ContentStyle } from '../models/swaggerEnum'
 // import { logger } from '../utils/log'
@@ -6,6 +6,7 @@ import { accessFile, makeDirSync } from '../utils/file'
 import axios from 'axios'
 import path from 'path'
 import {
+  getApiContent,
   getControllerPaths,
   getModelContent,
   processRefItem,
@@ -196,6 +197,9 @@ export const createServiceFile = (
   // 处理关联实体的数据
   processRefItem(swaggerInfo)
 
+  // 创建实体时，创建API的相关信息
+  const cacheApiData: Record<string, ApiCacheData>[] = []
+
   for (let i = 0; i < paths.length; i++) {
     const pathStr = paths[i] // controller的英文名称
     const pathNameStr = pathNames[i] // controller的名称
@@ -209,7 +213,12 @@ export const createServiceFile = (
       // controller的实体路径
       const fileDir = configData.runDataInfo!.modelPath + path.sep + pathStr
       // 获取实体文件
-      const content = getModelContent(swaggerInfo, configData, pathNameStr)
+      const content = getModelContent(
+        swaggerInfo,
+        configData,
+        pathNameStr,
+        cacheApiData
+      )
       // 创建实体文件
       accessFile(fileDir, content, configData)
     }
@@ -220,9 +229,18 @@ export const createServiceFile = (
       configData.fileSettings?.content === ContentStyle.all ||
       configData.fileSettings?.content === ContentStyle.onlyApi
     ) {
-      //makeDirSync(configData.runDataInfo!.apiPath + path.sep + pathStr)
-      // to do
-      console.log('create api file')
+      // controller的API路径
+      const fileDir = configData.runDataInfo!.apiPath + path.sep + pathStr
+
+      // 获取API文件
+      const content = getApiContent(
+        swaggerInfo,
+        configData,
+        pathNameStr,
+        cacheApiData
+      )
+      // 创建API文件
+      accessFile(fileDir, content, configData)
     }
   }
 

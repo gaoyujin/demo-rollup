@@ -1,12 +1,8 @@
 /**
  * <%=data.summary %>
- * @param data 
- * @param config 
- * @returns <%-data.responses %>
+ * @returns <%-data.responseName %>
  */
-export const <%=data.title %> = (data: <%=data.parData %>, config?: any): <%-data.responses %> => {
-  return http.request("<%=data.method %>", DOMAIN + "<%=data.url %>"<% if(Object.keys(data.queryDesc).length>0) {%> <% for (let key of Object.keys(data.queryDesc)) { %> 
-    + "<%-key %>=" + <%=data.queryDesc[key] %><%} %><%}%>,
-    {<%{%>data, ...config <%}%>}
+export const <%=data.methodTitle%> = (<% if(data.parameters && data.parameters.length>0) {%> <% for (let i = 0; i < data.parameters.length; i++) {%><%=data.parameters[i].name %><%=data.parameters[i].required ? '' : '?' %>: <%=data.parameters[i].model %>, <% } %><% } %><% if(!data.parameters || data.parameters.length<1) {%>'data: {},'<% } %>config?: any): Promise<<%-data.responseName %>> => {
+  return http.request("<%=data.method %>", DOMAIN + "<%=data.url %>", {<% if(data.parameters && data.parameters.length>0) {%> <% for (let i = 0; i < data.parameters.length; i++) { %><%=data.parameters[i].name %>,<% } %><% } %><% if(!data.parameters || data.parameters.length<1) {%>'data,'<% } %> ...config }
   );
 };
