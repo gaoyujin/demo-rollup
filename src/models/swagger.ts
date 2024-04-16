@@ -97,6 +97,7 @@ export type ApiCacheData = {
   url?: string
   method?: string
   methodTitle?: string
+  useTitle?: string
   parameters?: ApiParameter[]
   responseName?: string
 }

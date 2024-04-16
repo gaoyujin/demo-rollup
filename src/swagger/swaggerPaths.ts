@@ -13,7 +13,7 @@ import {
   getParameterInfo,
   getResponseInfo,
 } from './swaggerDefinitions'
-import { getApiTemp } from './template'
+import { getApiHookTemp, getApiTemp } from './template'
 
 // 根据tag，获取controller的path
 export const getControllerPaths = (
@@ -378,6 +378,7 @@ export const getApiContent = (
     resultHtml = resultHtml + strHtml
   }
 
+  // 添加api 顶部的import
   const importPath = configData.runDataInfo!.importPath + '/' + controllerName
   const importResultHtml =
     'import { ' +
@@ -415,11 +416,13 @@ export const getImportContent = (
       }
     }
   }
-  if (cacheApi.responseName === 'LeadListResponse') {
-    console.log('LeadListResponse')
-  }
   if (
     cacheApi.responseName &&
+    cacheApi.responseName !== 'string' &&
+    cacheApi.responseName !== 'boolean' &&
+    cacheApi.responseName !== 'number' &&
+    cacheApi.responseName !== 'null' &&
+    cacheApi.responseName !== 'integer' &&
     !(', ' + importHtml + ',').includes(', ' + cacheApi.responseName + ',')
   ) {
     // 获取返回信息的import关联信息
@@ -427,6 +430,127 @@ export const getImportContent = (
       resultImportHtml = resultImportHtml + ', '
     }
     resultImportHtml = resultImportHtml + cacheApi.responseName
+  }
+
+  // return 'import { ' + resultImportHtml + " } from '" + importPath + "'"
+  return resultImportHtml
+}
+
+// 根据path，生成ApiHook内容
+export const getApiHookContent = (
+  swaggerInfo: Swagger,
+  configData: DefineConfig,
+  pathName: string,
+  cacheApiData: Record<string, ApiCacheData>[],
+  controllerName: string
+): string => {
+  if (
+    !configData.runDataInfo?.tagAndPath ||
+    !configData.runDataInfo?.tagAndPath[pathName]
+  ) {
+    return ''
+  }
+
+  const listMethods = configData.runDataInfo?.tagAndPath[pathName]
+  if (!listMethods || listMethods.length < 1) {
+    return ''
+  }
+
+  let importHtml = ''
+  let hookImportHtml = ''
+  let resultHtml = ''
+  for (let i = 0; i < listMethods.length; i++) {
+    const methodInfo = listMethods[i]
+    const methodPath = setPathData(methodInfo)
+
+    if (!cacheApiData) {
+      break
+    }
+
+    // 找到接口的参数和返回信息
+    const findItem = cacheApiData.find(
+      (item) => Object.keys(item)[0] === methodPath.url
+    )
+
+    if (!findItem) {
+      continue
+    }
+
+    const apiData = findItem[Object.keys(findItem)[0]]
+    if (!apiData) {
+      continue
+    }
+
+    if (!apiData.responseName) {
+      apiData.responseName = 'void'
+    }
+
+    apiData.useTitle = capitalizeFirstLetter(apiData.methodTitle as string)
+
+    const fileTemp = getApiHookTemp()
+    const strHtml = ejs.render(fileTemp, {
+      data: apiData,
+    })
+
+    // 获取import关联信息
+    const newImportHtml = getImportContent(apiData, importHtml)
+    if (newImportHtml) {
+      if (importHtml) {
+        importHtml = importHtml + ', '
+      }
+      importHtml = importHtml + newImportHtml
+    }
+
+    // 获取HookImport关联信息
+    const newHookImportHtml = getHookImportContent(apiData, hookImportHtml)
+    if (newHookImportHtml) {
+      if (hookImportHtml) {
+        hookImportHtml = hookImportHtml + ', '
+      }
+      hookImportHtml = hookImportHtml + newHookImportHtml
+    }
+
+    resultHtml = resultHtml + strHtml
+  }
+
+  // 添加api 顶部的import
+  const importPath = configData.runDataInfo!.importPath + '/' + controllerName
+  const hookImportPath =
+    configData.runDataInfo!.hookImportPath + '/' + controllerName
+  const importResultHtml =
+    'import { ' +
+    importHtml +
+    " } from '" +
+    importPath +
+    "' \r\n" +
+    'import { ' +
+    hookImportHtml +
+    " } from '" +
+    hookImportPath +
+    "' \r\n" +
+    configData.fileSettings!.messageImportContent +
+    ' \r\n\r\n'
+
+  return importResultHtml + resultHtml
+}
+
+// 获取HookImport关联信息
+export const getHookImportContent = (
+  cacheApi: ApiCacheData,
+  importHtml: string
+) => {
+  // 获取参数的import关联信息
+  let resultImportHtml = ''
+
+  if (
+    cacheApi.methodTitle &&
+    !(', ' + importHtml + ',').includes(', ' + cacheApi.methodTitle + ',')
+  ) {
+    // 获取返回信息的import关联信息
+    if (resultImportHtml && !resultImportHtml.endsWith(',')) {
+      resultImportHtml = resultImportHtml + ', '
+    }
+    resultImportHtml = resultImportHtml + cacheApi.methodTitle
   }
 
   // return 'import { ' + resultImportHtml + " } from '" + importPath + "'"

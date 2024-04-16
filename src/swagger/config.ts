@@ -13,6 +13,8 @@ export const defaultConfig: DefineConfig = {
     topDirPath: 'src', // 生成文件的基础路径
     topAlias: '/@',
     axiosImportContent: "import { http } from '/@/utils/http'",
+    messageImportContent:
+      "import { errorMessage } from '/@/utils/message/index'",
     model: {
       dirName: 'models', // 实体生成的文件夹名称 默认根目录下"models"
       createMode: 'overwrite', // 生产文件的模式  add:追加  overwrite:覆盖 默认是覆盖

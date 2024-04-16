@@ -16,7 +16,8 @@ export type FileSetting = {
   content?: ContentStyle // 生产文件的内容  all:全部  onlyModel:只生成实体  onlyApi:只生成api
   topDirPath?: string // 生产文件夹的路径 默认根目录下"src"
   topAlias?: string // 根目录别名 默认根目录下"/@"
-  axiosImportContent: string // axios引入内容
+  axiosImportContent?: string // axios引入内容
+  messageImportContent?: string // message引入内容
   model: ModelConfig // 实体配置
   api: ApiConfig // api配置
 }
@@ -43,5 +44,6 @@ export type RunData = {
   modelPath?: string
   apiPath?: string
   importPath?: string
+  hookImportPath?: string
   tagAndPath?: Record<string, Record<string, Record<string, SwaggerMethod>>[]>
 }

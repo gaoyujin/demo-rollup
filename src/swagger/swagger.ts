@@ -7,6 +7,7 @@ import axios from 'axios'
 import path from 'path'
 import {
   getApiContent,
+  getApiHookContent,
   getControllerPaths,
   getModelContent,
   processRefItem,
@@ -104,6 +105,12 @@ export const createFilePath = (
     configData.fileSettings!.topAlias +
     '/' +
     configData.fileSettings?.model.dirName +
+    '/' +
+    serviceName
+  configData.runDataInfo!.hookImportPath =
+    configData.fileSettings!.topAlias +
+    '/' +
+    configData.fileSettings?.api.dirName +
     '/' +
     serviceName
 
@@ -209,6 +216,7 @@ export const createServiceFile = (
   for (let i = 0; i < paths.length; i++) {
     const pathStr = paths[i] // controller的英文名称
     const pathNameStr = pathNames[i] // controller的名称
+    const pathHookStr = pathStr.replace('.ts', '') + 'Hook.ts' // controller的名称
 
     // 创建实体的文件
     if (
@@ -248,6 +256,20 @@ export const createServiceFile = (
       )
       // 创建API文件
       accessFile(fileDir, content, configData)
+
+      // controller的API路径
+      const hookDir = configData.runDataInfo!.apiPath + path.sep + pathHookStr
+
+      const hookContent = getApiHookContent(
+        swaggerInfo,
+        configData,
+        pathNameStr,
+        cacheApiData,
+        pathStr.replace('.ts', '')
+      )
+
+      // 创建API文件
+      accessFile(hookDir, hookContent, configData)
     }
   }
 
