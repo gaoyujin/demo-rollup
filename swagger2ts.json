@@ -1,13 +1,29 @@
 {
-  "includePaths": [],
-  "excludePaths": [],
+  "swaggerVersion": "2.0",
+  "includeTags": ["前端API接口-销售线索"],
+  "excludeTags": [],
   "fileSettings": {
-    "topAlias": "../.."
+    "content": "all",
+    "topDirPath": "src",
+    "topAlias": "/@",
+    "axiosImportContent": "import { http } from '/@/utils/http'",
+    "messageImportContent": "import { errorMessage } from '/@/utils/message/index'",
+    "model": {
+      "dirName": "models",
+      "createMode": "overwrite"
+    },
+    "api": {
+      "dirName": "apis",
+      "createMode": "overwrite",
+      "nameMode": "url",
+      "urlLevel": 2
+    }
   },
   "serverNameSettings": [
     {
-      "name": "达人交付服务",
-      "fileName": "ScheduleServer"
+      "name": "电销线索采集服务",
+      "fileName": "marketingtmk"
     }
-  ]
+  ],
+  "isHttps": false
 }

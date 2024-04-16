@@ -3,8 +3,8 @@ import { ContentStyle } from './swaggerEnum'
 
 export type DefineConfig = {
   swaggerVersion?: string // 支持的swagger版本
-  includePaths?: string[] // 包含的请求路径 （空是所有，配置了，就匹配配置内容）
-  excludePaths?: string[] // 排除的请求路径
+  includeTags?: string[] // 包含的请求路径 （空是所有，配置了，就匹配配置内容）
+  excludeTags?: string[] // 排除的请求路径
   fileSettings?: FileSetting // 生产文件的操作
   serverNameSettings?: ServerNameConfig[] // 服务文件夹名称映射
   isHttps?: boolean // 是否是https

@@ -5,8 +5,8 @@ import { ContentStyle } from '../models/swaggerEnum'
 
 export const defaultConfig: DefineConfig = {
   swaggerVersion: '2.0', // 支持的swagger版本
-  includePaths: [], // 包含的请求路径 （空是所有，配置了，就匹配配置内容）
-  excludePaths: [], // 排除的请求路径
+  includeTags: [], // 包含的Controller (空是所有，配置了，就匹配配置内容)
+  excludeTags: ['前端API接口-销售线索'], // 排除的Controller (高优先级)
   fileSettings: {
     extNameType: 'ts', // 生产文件后缀名 只支持ts
     content: ContentStyle.all, // 生产文件的内容  all:全部  onlyModel:只生成实体  onlyApi:只生成api
@@ -43,5 +43,57 @@ export function getConfigInfo(): DefineConfig {
     return JSON.parse(configData)
   } else {
     return {}
+  }
+}
+
+// 写入配置信息
+export function writeConfigInfo(
+  configData: DefineConfig,
+  settingInfo: DefineConfig
+) {
+  if (settingInfo) {
+    configData.excludeTags = settingInfo.excludeTags
+      ? settingInfo.excludeTags
+      : configData.excludeTags
+
+    configData.includeTags = settingInfo.includeTags
+      ? settingInfo.includeTags
+      : configData.includeTags
+
+    configData.isHttps = settingInfo.isHttps
+      ? settingInfo.isHttps
+      : configData.isHttps
+
+    configData.swaggerVersion = settingInfo.swaggerVersion
+      ? settingInfo.swaggerVersion
+      : configData.swaggerVersion
+
+    configData.serverNameSettings = settingInfo.serverNameSettings
+      ? settingInfo.serverNameSettings
+      : configData.serverNameSettings
+
+    configData.fileSettings!.api = settingInfo.fileSettings?.api
+      ? settingInfo.fileSettings?.api
+      : configData.fileSettings!.api
+
+    configData.fileSettings!.model = settingInfo.fileSettings?.model
+      ? settingInfo.fileSettings?.model
+      : configData.fileSettings!.model
+
+    configData.fileSettings!.topAlias = settingInfo.fileSettings?.topAlias
+      ? settingInfo.fileSettings?.topAlias
+      : configData.fileSettings!.topAlias
+
+    configData.fileSettings!.topDirPath = settingInfo.fileSettings?.topDirPath
+      ? settingInfo.fileSettings?.topDirPath
+      : configData.fileSettings!.topDirPath
+
+    configData.fileSettings!.extNameType = settingInfo.fileSettings?.extNameType
+      ? settingInfo.fileSettings?.extNameType
+      : configData.fileSettings!.extNameType
+
+    configData.fileSettings!.content = settingInfo.fileSettings?.content
+      ? settingInfo.fileSettings?.content
+      : configData.fileSettings!.content
   }
 }

@@ -177,14 +177,34 @@ export const getTagsData = (swaggerInfo: Swagger, configData: DefineConfig) => {
       continue
     }
 
-    const arrStr = item.description.split(' ')
+    // 排除的Controller
+    const controllerName = item.description.split(' ').join('')
+    if (
+      configData.excludeTags?.includes(item.name) ||
+      configData.excludeTags?.includes(controllerName) ||
+      configData.excludeTags?.includes(item.description)
+    ) {
+      continue
+    }
+    console.log('!!!!!!')
+    // 包含或者配置为空
+    if (
+      !configData.includeTags ||
+      configData.includeTags.length < 1 ||
+      (configData.includeTags &&
+        (configData.includeTags.includes(item.name) ||
+          configData.includeTags.includes(controllerName) ||
+          configData.includeTags.includes(item.description)))
+    ) {
+      const arrStr = item.description.split(' ')
 
-    // 设置tag的对象
-    getControllerPaths(swaggerInfo, configData, item.name)
+      // 设置tag的对象
+      getControllerPaths(swaggerInfo, configData, item.name)
 
-    // 创建controller的路径
-    result.paths.push(arrStr.join('') + '.ts')
-    result.pathNames.push(item.name)
+      // 创建controller的路径
+      result.paths.push(arrStr.join('') + '.ts')
+      result.pathNames.push(item.name)
+    }
   }
 
   return result

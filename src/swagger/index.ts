@@ -1,7 +1,7 @@
 import { DefineConfig } from '../models/swaggerConfig'
 import { logger } from '../utils/log'
 import { isValidUrl } from '../utils/pattern'
-import { defaultConfig, getConfigInfo } from './config'
+import { defaultConfig, getConfigInfo, writeConfigInfo } from './config'
 import { createServiceDir, createServiceFile, getSwaggerInfo } from './swagger'
 
 // 验证参数
@@ -36,55 +36,7 @@ export class SwaggerToTypescript {
     }
 
     const settingInfo: DefineConfig = getConfigInfo()
-    if (settingInfo) {
-      this.configData.excludePaths = settingInfo.excludePaths
-        ? settingInfo.excludePaths
-        : this.configData.excludePaths
-
-      this.configData.includePaths = settingInfo.includePaths
-        ? settingInfo.includePaths
-        : this.configData.includePaths
-
-      this.configData.isHttps = settingInfo.isHttps
-        ? settingInfo.isHttps
-        : this.configData.isHttps
-
-      this.configData.swaggerVersion = settingInfo.swaggerVersion
-        ? settingInfo.swaggerVersion
-        : this.configData.swaggerVersion
-
-      this.configData.serverNameSettings = settingInfo.serverNameSettings
-        ? settingInfo.serverNameSettings
-        : this.configData.serverNameSettings
-
-      this.configData.fileSettings!.api = settingInfo.fileSettings?.api
-        ? settingInfo.fileSettings?.api
-        : this.configData.fileSettings!.api
-
-      this.configData.fileSettings!.model = settingInfo.fileSettings?.model
-        ? settingInfo.fileSettings?.model
-        : this.configData.fileSettings!.model
-
-      this.configData.fileSettings!.topAlias = settingInfo.fileSettings
-        ?.topAlias
-        ? settingInfo.fileSettings?.topAlias
-        : this.configData.fileSettings!.topAlias
-
-      this.configData.fileSettings!.topDirPath = settingInfo.fileSettings
-        ?.topDirPath
-        ? settingInfo.fileSettings?.topDirPath
-        : this.configData.fileSettings!.topDirPath
-
-      this.configData.fileSettings!.extNameType = settingInfo.fileSettings
-        ?.extNameType
-        ? settingInfo.fileSettings?.extNameType
-        : this.configData.fileSettings!.extNameType
-
-      this.configData.fileSettings!.content = settingInfo.fileSettings?.content
-        ? settingInfo.fileSettings?.content
-        : this.configData.fileSettings!.content
-    }
-
+    writeConfigInfo(this.configData, settingInfo)
     logger.info('configData:', JSON.stringify(this.configData))
 
     // swagger 信息处理
