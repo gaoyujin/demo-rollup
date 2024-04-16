@@ -33,8 +33,58 @@ export class SwaggerToTypescript {
     this.swaggerUrl = swaggerUrl
     this.configData = {
       ...defaultConfig,
-      ...getConfigInfo(),
     }
+
+    const settingInfo: DefineConfig = getConfigInfo()
+    if (settingInfo) {
+      this.configData.excludePaths = settingInfo.excludePaths
+        ? settingInfo.excludePaths
+        : this.configData.excludePaths
+
+      this.configData.includePaths = settingInfo.includePaths
+        ? settingInfo.includePaths
+        : this.configData.includePaths
+
+      this.configData.isHttps = settingInfo.isHttps
+        ? settingInfo.isHttps
+        : this.configData.isHttps
+
+      this.configData.swaggerVersion = settingInfo.swaggerVersion
+        ? settingInfo.swaggerVersion
+        : this.configData.swaggerVersion
+
+      this.configData.serverNameSettings = settingInfo.serverNameSettings
+        ? settingInfo.serverNameSettings
+        : this.configData.serverNameSettings
+
+      this.configData.fileSettings!.api = settingInfo.fileSettings?.api
+        ? settingInfo.fileSettings?.api
+        : this.configData.fileSettings!.api
+
+      this.configData.fileSettings!.model = settingInfo.fileSettings?.model
+        ? settingInfo.fileSettings?.model
+        : this.configData.fileSettings!.model
+
+      this.configData.fileSettings!.topAlias = settingInfo.fileSettings
+        ?.topAlias
+        ? settingInfo.fileSettings?.topAlias
+        : this.configData.fileSettings!.topAlias
+
+      this.configData.fileSettings!.topDirPath = settingInfo.fileSettings
+        ?.topDirPath
+        ? settingInfo.fileSettings?.topDirPath
+        : this.configData.fileSettings!.topDirPath
+
+      this.configData.fileSettings!.extNameType = settingInfo.fileSettings
+        ?.extNameType
+        ? settingInfo.fileSettings?.extNameType
+        : this.configData.fileSettings!.extNameType
+
+      this.configData.fileSettings!.content = settingInfo.fileSettings?.content
+        ? settingInfo.fileSettings?.content
+        : this.configData.fileSettings!.content
+    }
+
     logger.info('configData:', JSON.stringify(this.configData))
 
     // swagger 信息处理
@@ -84,7 +134,6 @@ export class SwaggerToTypescript {
       }
 
       // 获取所有的Controller的接口信息
-      
 
       // 处理每个tag
       //for (const tag of resSwagger.tags) {

@@ -11,6 +11,8 @@ export const defaultConfig: DefineConfig = {
     extNameType: 'ts', // 生产文件后缀名 只支持ts
     content: ContentStyle.all, // 生产文件的内容  all:全部  onlyModel:只生成实体  onlyApi:只生成api
     topDirPath: 'src', // 生成文件的基础路径
+    topAlias: '/@',
+    axiosImportContent: "import { http } from '/@/utils/http'",
     model: {
       dirName: 'models', // 实体生成的文件夹名称 默认根目录下"models"
       createMode: 'overwrite', // 生产文件的模式  add:追加  overwrite:覆盖 默认是覆盖
@@ -18,6 +20,8 @@ export const defaultConfig: DefineConfig = {
     api: {
       dirName: 'apis', // 实体生成的文件夹名称 默认根目录下"models"
       createMode: 'overwrite', // 生产文件的模式  add:追加  overwrite:覆盖 默认是覆盖
+      nameMode: 'url', // 生成接口的名称的模式：operationId 、url
+      urlLevel: 2, // 截取名称的层级 默认是2
     },
   }, // 生产文件的操作
   serverNameSettings: [], // 服务文件夹名称映射

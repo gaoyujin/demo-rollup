@@ -100,6 +100,12 @@ export const createFilePath = (
     serviceName
   configData.runDataInfo!.modelPath = modelPath
   configData.runDataInfo!.apiPath = apiPath
+  configData.runDataInfo!.importPath =
+    configData.fileSettings!.topAlias +
+    '/' +
+    configData.fileSettings?.model.dirName +
+    '/' +
+    serviceName
 
   console.log('modelPath:', modelPath)
   console.log('apiPath:', apiPath)
@@ -237,7 +243,8 @@ export const createServiceFile = (
         swaggerInfo,
         configData,
         pathNameStr,
-        cacheApiData
+        cacheApiData,
+        pathStr.replace('.ts', '')
       )
       // 创建API文件
       accessFile(fileDir, content, configData)

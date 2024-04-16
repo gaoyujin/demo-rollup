@@ -1,6 +1,9 @@
 {
   "includePaths": [],
   "excludePaths": [],
+  "fileSettings": {
+    "topAlias": "../.."
+  },
   "serverNameSettings": [
     {
       "name": "达人交付服务",

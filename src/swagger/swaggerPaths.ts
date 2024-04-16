@@ -8,7 +8,11 @@ import {
 } from '../models/swagger'
 import { DefineConfig } from '../models/swaggerConfig'
 import { ParameterIn } from '../models/swaggerEnum'
-import { getParameterInfo, getResponseInfo } from './swaggerDefinitions'
+import {
+  capitalizeFirstLetter,
+  getParameterInfo,
+  getResponseInfo,
+} from './swaggerDefinitions'
 import { getApiTemp } from './template'
 
 // 根据tag，获取controller的path
@@ -101,7 +105,10 @@ export const createParameterModel = (methodPath: MethodPath): string => {
 }
 
 // 初始化API的参数内容
-export const initApiParameter = (methodPath: MethodPath): ApiCacheData => {
+export const initApiParameter = (
+  methodPath: MethodPath,
+  configData: DefineConfig
+): ApiCacheData => {
   const apiCache: ApiCacheData = {
     summary: '',
     url: '',
@@ -114,9 +121,47 @@ export const initApiParameter = (methodPath: MethodPath): ApiCacheData => {
   apiCache.method = methodPath.method
   apiCache.url = methodPath.url
   apiCache.summary = methodPath.data!.summary
-  apiCache.methodTitle = methodPath.data!.operationId.split('Using')[0]
+  apiCache.methodTitle = getApiName(methodPath, configData)
 
   return apiCache
+}
+
+// 获取接口的名称
+export const getApiName = (
+  methodPath: MethodPath,
+  configData: DefineConfig
+) => {
+  if (configData.fileSettings?.api.nameMode === 'operationId')
+    return methodPath.data!.operationId.split('Using')[0]
+  else {
+    const level = configData.fileSettings?.api.urlLevel
+      ? configData.fileSettings?.api.urlLevel
+      : 2
+
+    const arrUrl = methodPath.url?.split('/')
+    let result = ''
+    if (arrUrl!.length < level) {
+      for (let i = 0; i < arrUrl!.length; i++) {
+        const str = arrUrl![i]
+        if (i === 0) {
+          result = str
+        } else {
+          if (str) result = result + capitalizeFirstLetter(str)
+        }
+      }
+    } else {
+      for (let i = 0; i < level; i++) {
+        const str = arrUrl![arrUrl!.length - i - 1]
+        if (i === level - 1) {
+          result = str + result
+        } else {
+          if (str) result = capitalizeFirstLetter(str) + result
+        }
+      }
+    }
+
+    return result
+  }
 }
 
 // 根据path，生成model内容
@@ -151,7 +196,7 @@ export const getModelContent = (
   for (let i = 0; i < listMethods.length; i++) {
     const methodInfo = listMethods[i]
     const methodPath = setPathData(methodInfo)
-    const apiCache = initApiParameter(methodPath)
+    const apiCache = initApiParameter(methodPath, configData)
 
     // 获取参数的实体信息
     getParameterInfo(swaggerInfo, methodPath, cache, apiCache)
@@ -266,7 +311,8 @@ export const getApiContent = (
   swaggerInfo: Swagger,
   configData: DefineConfig,
   pathName: string,
-  cacheApiData: Record<string, ApiCacheData>[]
+  cacheApiData: Record<string, ApiCacheData>[],
+  controllerName: string
 ): string => {
   if (!configData.runDataInfo?.tagAndPath) {
     console.error('tagAndPath is null')
@@ -284,6 +330,7 @@ export const getApiContent = (
     return ''
   }
 
+  let importHtml = ''
   let resultHtml = ''
   for (let i = 0; i < listMethods.length; i++) {
     const methodInfo = listMethods[i]
@@ -310,12 +357,78 @@ export const getApiContent = (
       continue
     }
 
+    if (!apiData.responseName) {
+      apiData.responseName = 'void'
+    }
+
     const fileTemp = getApiTemp()
     const strHtml = ejs.render(fileTemp, {
       data: apiData,
     })
 
+    // 获取import关联信息
+    const newImportHtml = getImportContent(apiData, importHtml)
+    if (newImportHtml) {
+      if (importHtml) {
+        importHtml = importHtml + ', '
+      }
+      importHtml = importHtml + newImportHtml
+    }
+
     resultHtml = resultHtml + strHtml
   }
-  return resultHtml
+
+  const importPath = configData.runDataInfo!.importPath + '/' + controllerName
+  const importResultHtml =
+    'import { ' +
+    importHtml +
+    " } from '" +
+    importPath +
+    "' \r\n" +
+    configData.fileSettings!.axiosImportContent +
+    ' \r\n\r\n' +
+    'export const DOMAIN = ""; \r\n\r\n'
+
+  return importResultHtml + resultHtml
+}
+
+// 获取import关联信息
+export const getImportContent = (
+  cacheApi: ApiCacheData,
+  importHtml: string
+) => {
+  // 获取参数的import关联信息
+  let resultImportHtml = ''
+  if (cacheApi.parameters && cacheApi.parameters.length > 0) {
+    for (let i = 0; i < cacheApi.parameters.length; i++) {
+      if (
+        (', ' + importHtml + ',').includes(
+          ', ' + cacheApi.parameters[i].model + ','
+        )
+      ) {
+        continue
+      } else {
+        if (resultImportHtml && !resultImportHtml.endsWith(',')) {
+          resultImportHtml = resultImportHtml + ', '
+        }
+        resultImportHtml = resultImportHtml + cacheApi.parameters[i].model
+      }
+    }
+  }
+  if (cacheApi.responseName === 'LeadListResponse') {
+    console.log('LeadListResponse')
+  }
+  if (
+    cacheApi.responseName &&
+    !(', ' + importHtml + ',').includes(', ' + cacheApi.responseName + ',')
+  ) {
+    // 获取返回信息的import关联信息
+    if (resultImportHtml && !resultImportHtml.endsWith(',')) {
+      resultImportHtml = resultImportHtml + ', '
+    }
+    resultImportHtml = resultImportHtml + cacheApi.responseName
+  }
+
+  // return 'import { ' + resultImportHtml + " } from '" + importPath + "'"
+  return resultImportHtml
 }

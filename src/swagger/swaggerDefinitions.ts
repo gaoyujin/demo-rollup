@@ -243,12 +243,16 @@ export const getResponseInfo = (
 // 设置接口的返回对象名称
 export const setApiResponseName = (response: ResponseInfo) => {
   if (!response.schema) {
-    return ''
+    return 'void'
   }
 
   const refStr = response.schema.$ref
   if (!refStr) {
-    return ''
+    if (response.schema.type) {
+      return response.schema.type
+    } else {
+      return 'void'
+    }
   }
 
   // 获取参数名称
@@ -257,7 +261,7 @@ export const setApiResponseName = (response: ResponseInfo) => {
     return getResponseName(responseName)
   }
 
-  return ''
+  return 'void'
 }
 
 // 返回的实体对象
@@ -396,7 +400,7 @@ export const getNextResponseName = (responseName: string, level: number) => {
 }
 
 // 第一个字母变成大写
-function capitalizeFirstLetter(str: string) {
+export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
