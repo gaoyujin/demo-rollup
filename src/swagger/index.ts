@@ -84,12 +84,6 @@ export class SwaggerToTypescript {
       if (!controllerRes) {
         return
       }
-
-      // 获取所有的Controller的接口信息
-
-      // 处理每个tag
-      //for (const tag of resSwagger.tags) {
-      //}
     }
   }
 }

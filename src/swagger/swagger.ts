@@ -186,7 +186,7 @@ export const getTagsData = (swaggerInfo: Swagger, configData: DefineConfig) => {
     ) {
       continue
     }
-    console.log('!!!!!!')
+
     // 包含或者配置为空
     if (
       !configData.includeTags ||

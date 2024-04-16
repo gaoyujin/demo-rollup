@@ -44,9 +44,6 @@ export type SwaggerMethod = {
   parameters: SwaggerParameter[]
   responses: Record<string, ResponseInfo>
   deprecated: boolean
-  // parameterNames?: string[]
-  // responseName?: string
-  // methodTitle?: string
 }
 
 export type PropertyInfo = {
@@ -78,7 +75,6 @@ export type MethodPath = {
   url?: string
   method?: string
   data?: SwaggerMethod
-  // responses?: Record<string, ResponseInfo>[];
 }
 
 export type DataCache = {
