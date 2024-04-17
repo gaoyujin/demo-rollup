@@ -1,6 +1,7 @@
 import { DefineConfig } from '../models/swaggerConfig'
 import path from 'path'
 import fs from 'fs'
+import JSON5 from 'json5'
 import { ContentStyle } from '../models/swaggerEnum'
 
 export const defaultConfig: DefineConfig = {
@@ -37,10 +38,10 @@ export const defaultConfig: DefineConfig = {
 
 // 读取配置信息
 export function getConfigInfo(): DefineConfig {
-  const filePath = path.join(process.cwd(), 'swagger2ts.json')
+  const filePath = path.join(process.cwd(), 'swagger2ts.jsonc')
   if (fs.existsSync(filePath)) {
     const configData = fs.readFileSync(filePath).toString()
-    return JSON.parse(configData)
+    return JSON5.parse(configData)
   } else {
     return {}
   }

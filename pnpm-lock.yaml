@@ -11,6 +11,9 @@ dependencies:
   ejs:
     specifier: ^3.1.9
     version: 3.1.9
+  json5:
+    specifier: ^2.2.3
+    version: 2.2.3
   log4js:
     specifier: ^6.9.1
     version: 6.9.1
@@ -689,6 +692,12 @@ packages:
       chalk: 4.1.2
       filelist: 1.0.4
       minimatch: 3.1.2
+    dev: false
+
+  /json5@2.2.3:
+    resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
+    engines: {node: '>=6'}
+    hasBin: true
     dev: false
 
   /jsonfile@4.0.0:

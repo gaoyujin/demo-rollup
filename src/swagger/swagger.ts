@@ -260,8 +260,7 @@ export const createServiceFile = (
     // 创建api的文件
     if (
       !configData.fileSettings?.content ||
-      configData.fileSettings?.content === ContentStyle.all ||
-      configData.fileSettings?.content === ContentStyle.onlyApi
+      configData.fileSettings?.content === ContentStyle.all
     ) {
       // controller的API路径
       const fileDir = configData.runDataInfo!.apiPath + path.sep + pathStr
