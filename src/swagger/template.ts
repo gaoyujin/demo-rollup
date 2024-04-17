@@ -4,7 +4,7 @@ import fs from 'fs'
 // 获取model的模版
 export const getModelTemp = () => {
   const tempPath =
-    process.cwd() +
+    __dirname +
     path.sep +
     'templates' +
     path.sep +
@@ -19,7 +19,7 @@ export const getModelTemp = () => {
 // 获取Api的模版
 export const getApiTemp = () => {
   const tempPath =
-    process.cwd() +
+    __dirname +
     path.sep +
     'templates' +
     path.sep +
@@ -34,7 +34,7 @@ export const getApiTemp = () => {
 // 获取ApiHook的模版
 export const getApiHookTemp = () => {
   const tempPath =
-    process.cwd() +
+    __dirname +
     path.sep +
     'templates' +
     path.sep +
@@ -49,7 +49,7 @@ export const getApiHookTemp = () => {
 // 获取配置的初始化信息
 export const getConfigTemplate = () => {
   const tempPath =
-    process.cwd() +
+    __dirname +
     path.sep +
     'templates' +
     path.sep +
