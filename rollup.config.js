@@ -2,6 +2,7 @@ import typescript from 'rollup-plugin-typescript2' // 处理typescript
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
+import copy from 'rollup-plugin-copy'
 
 /**
  *
@@ -14,6 +15,12 @@ export default [
       json(),
       resolve(), // so Rollup can find `ms`
       typescript(), // typescript 转义
+      copy({
+        targets: [
+          { src: 'templates', dest: 'dist' },
+          { src: './package.json', dest: 'dist' },
+        ],
+      }),
     ],
     output: [
       {

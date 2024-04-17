@@ -84,6 +84,8 @@ export class SwaggerToTypescript {
       if (!controllerRes) {
         return
       }
+
+      console.info('swagger 信息处理完成')
     }
   }
 }
