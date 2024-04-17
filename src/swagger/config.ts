@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs'
 import JSON5 from 'json5'
 import { ContentStyle } from '../models/swaggerEnum'
+import { getConfigTemplate } from './template'
 
 export const defaultConfig: DefineConfig = {
   swaggerVersion: '2.0', // 支持的swagger版本
@@ -97,4 +98,20 @@ export function writeConfigInfo(
       ? settingInfo.fileSettings?.content
       : configData.fileSettings!.content
   }
+}
+
+// 配置文件初始化
+export function initConfigInfo() {
+  // 配置文件信息
+  const fileContent = getConfigTemplate()
+  const fileDir = process.cwd() + path.sep + 'swagger2ts.jsonc'
+  fs.writeFile(fileDir, fileContent, (err) => {
+    // 创建失败
+    if (err) {
+      console.error(`创建配置文件失败：${err}`)
+    } else {
+      // 创建成功
+      console.info(`创建配置文件成功`)
+    }
+  })
 }

@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { DefineConfig } from '../models/swaggerConfig'
+import { logger } from './log'
 
 // 创建目录
 export const makeDirSync = (filePath: string) => {
@@ -28,7 +29,7 @@ export const accessFile = (
     // 异步检查
     fs.access(fileDir, fs.constants.F_OK, (err) => {
       if (err) {
-        console.error('文件或目录不存在')
+        logger.error('文件或目录不存在', fileDir)
         createFile(fileDir, content)
         return
       }

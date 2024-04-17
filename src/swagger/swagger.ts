@@ -12,6 +12,7 @@ import {
   getModelContent,
   processRefItem,
 } from './swaggerPaths'
+import { logger } from '../utils/log'
 
 // 获取真正的swaggerUrl
 export const getSwaggerUrl = (url: string, configData: DefineConfig) => {
@@ -114,8 +115,8 @@ export const createFilePath = (
     '/' +
     serviceName
 
-  console.log('modelPath:', modelPath)
-  console.log('apiPath:', apiPath)
+  logger.info('modelPath:', modelPath)
+  logger.info('apiPath:', apiPath)
 
   // 创建实体的目录
   if (
