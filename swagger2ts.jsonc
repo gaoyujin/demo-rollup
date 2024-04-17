@@ -1,6 +1,6 @@
 {
   /* "swaggerVersion": "2.0", // 支持的swagger版本 */
-  "includeTags": ["前端API接口-销售线索"], // 包含的Controller (空是所有，配置了，就匹配配置内容)
+  "includeTags": [], // 包含的Controller (空是所有，配置了，就匹配配置内容)
   "excludeTags": [], // 排除的Controller (高优先级)
   "fileSettings": {
     "content": "all", // 生产文件的内容  all:全部  onlyModel:只生成实体

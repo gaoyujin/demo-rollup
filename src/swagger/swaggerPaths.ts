@@ -12,6 +12,7 @@ import {
   capitalizeFirstLetter,
   getParameterInfo,
   getResponseInfo,
+  getResponseName,
 } from './swaggerDefinitions'
 import { getApiHookTemp, getApiTemp } from './template'
 
@@ -292,6 +293,7 @@ export const processRefItem = (swaggerInfo: Swagger) => {
           // 设置关联实体名称
           const refType = refInfo.split('/').pop()
           property['$refType'] = refType
+          if (refType) property['$refTypeName'] = getResponseName(refType)
         } else if (property['items']) {
           const itemInfo = property['items']
           if (itemInfo['$ref']) {
@@ -423,6 +425,7 @@ export const getImportContent = (
     cacheApi.responseName !== 'number' &&
     cacheApi.responseName !== 'null' &&
     cacheApi.responseName !== 'integer' &&
+    cacheApi.responseName !== 'void' &&
     !(', ' + importHtml + ',').includes(', ' + cacheApi.responseName + ',')
   ) {
     // 获取返回信息的import关联信息

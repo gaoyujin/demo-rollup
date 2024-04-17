@@ -52,6 +52,7 @@ export type PropertyInfo = {
   enum?: string[]
   $ref?: string
   $refType?: string
+  $refTypeName?: string
   items?: SchemaInfo
 }
 

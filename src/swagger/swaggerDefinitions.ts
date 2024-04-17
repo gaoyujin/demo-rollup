@@ -120,29 +120,48 @@ export const getParameterContent = (
     return
   }
 
-  // 初始化数据
-  if (!parameter.schemaContent) {
-    parameter.schemaContent = ''
+  if (!parameterName || cache.parameters.includes(parameterName)) {
+    return
   }
-  const fileTemp = getModelTemp()
-  const strHtml = ejs.render(fileTemp, {
-    url: methodPath.url,
-    method: methodPath.method,
-    data: methodPath.data,
-    title: parameterName,
-    definition,
-  })
 
-  parameter.schemaContent = strHtml
+  try {
+    // 初始化数据
+    if (!parameter.schemaContent) {
+      parameter.schemaContent = ''
+    }
+    cache.parameters.push(parameterName)
+    const fileTemp = getModelTemp()
+    const strHtml = ejs.render(fileTemp, {
+      url: methodPath.url,
+      method: methodPath.method,
+      data: methodPath.data,
+      title: parameterName,
+      definition,
+    })
 
-  // 迭代的实体添加
-  setParameterDefinitionRef(
-    definition,
-    parameter,
-    swaggerInfo,
-    methodPath,
-    cache
-  )
+    parameter.schemaContent = strHtml
+
+    // 迭代的实体添加
+    setParameterDefinitionRef(
+      definition,
+      parameter,
+      swaggerInfo,
+      methodPath,
+      cache
+    )
+  } catch (err) {
+    console.info(
+      'getParameterContent',
+      JSON.stringify({
+        url: methodPath.url,
+        method: methodPath.method,
+        data: methodPath.data,
+        title: parameterName,
+        definition,
+      })
+    )
+    console.error(err.message)
+  }
 }
 
 // 处理参数实体引用实体
@@ -161,50 +180,61 @@ export const setParameterDefinitionRef = (
   if (!keys || keys.length < 1) {
     return
   }
+  try {
+    let allHtml = ''
+    const fileTemp = getModelTemp()
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
+      const property = definition.properties[key]
+      let typeName = ''
+      if (property.$ref && property.$refType) {
+        typeName = property.$refType
+      } else if (property.items && property.items.$ref && property.items.type) {
+        typeName = property.items.type
+      }
 
-  let allHtml = ''
-  const fileTemp = getModelTemp()
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i]
-    const property = definition.properties[key]
-    let typeName = ''
-    if (property.$ref && property.$refType) {
-      typeName = property.$refType
-    } else if (property.items && property.items.$ref && property.items.type) {
-      typeName = property.items.type
+      if (!typeName || cache.parameters.includes(typeName)) {
+        continue
+      }
+
+      const typeDefinition = swaggerInfo.definitions[typeName]
+      if (!typeDefinition) {
+        continue
+      }
+
+      cache.parameters.push(typeName)
+      const strHtml = ejs.render(fileTemp, {
+        url: methodPath.url,
+        method: methodPath.method,
+        data: methodPath.data,
+        title: typeName,
+        definition: typeDefinition,
+      })
+
+      allHtml = allHtml + strHtml
+
+      // 迭代的实体添加
+      setParameterDefinitionRef(
+        typeDefinition,
+        parameter,
+        swaggerInfo,
+        methodPath,
+        cache
+      )
     }
 
-    if (!typeName || cache.parameters.includes(typeName)) {
-      continue
-    }
-
-    const typeDefinition = swaggerInfo.definitions[typeName]
-    if (!typeDefinition) {
-      continue
-    }
-
-    cache.parameters.push(typeName)
-    const strHtml = ejs.render(fileTemp, {
-      url: methodPath.url,
-      method: methodPath.method,
-      data: methodPath.data,
-      title: typeName,
-      definition: typeDefinition,
-    })
-
-    allHtml = allHtml + strHtml
-
-    // 迭代的实体添加
-    setParameterDefinitionRef(
-      typeDefinition,
-      parameter,
-      swaggerInfo,
-      methodPath,
-      cache
+    parameter.schemaContent = parameter.schemaContent + allHtml
+  } catch (err) {
+    console.info(
+      'setParameterDefinitionRef',
+      JSON.stringify({
+        url: methodPath.url,
+        method: methodPath.method,
+        data: methodPath.data,
+      })
     )
+    console.error(err.message)
   }
-
-  parameter.schemaContent = parameter.schemaContent + allHtml
 }
 
 // 获取response信息
@@ -333,21 +363,39 @@ export const getResponseContent = (
   if (!response.schemaContent) {
     response.schemaContent = ''
   }
+  try {
+    const fileTemp = getModelTemp()
+    const realName = getResponseName(responseName)
+    const strHtml = ejs.render(fileTemp, {
+      url: methodPath.url,
+      method: methodPath.method,
+      data: methodPath.data,
+      title: realName,
+      definition,
+    })
 
-  const fileTemp = getModelTemp()
-  const realName = getResponseName(responseName)
-  const strHtml = ejs.render(fileTemp, {
-    url: methodPath.url,
-    method: methodPath.method,
-    data: methodPath.data,
-    title: realName,
-    definition,
-  })
+    response.schemaContent = response.schemaContent + strHtml
 
-  response.schemaContent = response.schemaContent + strHtml
-
-  // 迭代的实体添加
-  setResponseDefinitionRef(definition, response, swaggerInfo, methodPath, cache)
+    // 迭代的实体添加
+    setResponseDefinitionRef(
+      definition,
+      response,
+      swaggerInfo,
+      methodPath,
+      cache
+    )
+  } catch (err) {
+    console.info(
+      'getResponseContent',
+      JSON.stringify({
+        url: methodPath.url,
+        method: methodPath.method,
+        data: methodPath.data,
+        definition,
+      })
+    )
+    console.error(err.message)
+  }
 }
 
 // 处理返回体的名字
@@ -474,26 +522,39 @@ export const setResponseDefinitionRef = (
     if (!typeDefinition) {
       continue
     }
+    try {
+      cache.responses.push(typeName)
+      const strHtml = ejs.render(fileTemp, {
+        url: methodPath.url,
+        method: methodPath.method,
+        data: methodPath.data,
+        title: getResponseName(typeName),
+        definition: typeDefinition,
+      })
 
-    cache.responses.push(typeName)
-    const strHtml = ejs.render(fileTemp, {
-      url: methodPath.url,
-      method: methodPath.method,
-      data: methodPath.data,
-      title: typeName,
-      definition: typeDefinition,
-    })
+      allHtml = allHtml + strHtml
 
-    allHtml = allHtml + strHtml
-
-    // 迭代的实体添加
-    setResponseDefinitionRef(
-      typeDefinition,
-      response,
-      swaggerInfo,
-      methodPath,
-      cache
-    )
+      // 迭代的实体添加
+      setResponseDefinitionRef(
+        typeDefinition,
+        response,
+        swaggerInfo,
+        methodPath,
+        cache
+      )
+    } catch (err) {
+      console.info(
+        'setResponseDefinitionRef',
+        JSON.stringify({
+          url: methodPath.url,
+          method: methodPath.method,
+          data: methodPath.data,
+          title: typeName,
+          definition: typeDefinition,
+        })
+      )
+      console.error(err.message)
+    }
   }
 
   response.schemaContent = response.schemaContent + allHtml
