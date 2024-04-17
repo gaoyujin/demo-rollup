@@ -161,6 +161,10 @@ export const getApiName = (
       }
     }
 
+    if (!result) {
+      result = methodPath.data!.operationId.split('Using')[0]
+    }
+
     return result
   }
 }
