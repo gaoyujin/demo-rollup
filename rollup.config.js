@@ -3,6 +3,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import copy from 'rollup-plugin-copy'
+import terser from '@rollup/plugin-terser'
 
 /**
  *
@@ -21,6 +22,7 @@ export default [
           { src: './package.json', dest: 'dist' },
         ],
       }),
+      terser(),
     ],
     output: [
       {
