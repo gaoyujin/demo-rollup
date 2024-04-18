@@ -3,7 +3,8 @@ export enum ParameterIn {
   body = 'body',
   query = 'query',
   header = 'header',
-  formData= 'formData',
+  path = 'path',
+  formData = 'formData',
 }
 
 export enum ParameterType {
@@ -11,11 +12,11 @@ export enum ParameterType {
   integer = 'integer',
   boolean = 'boolean',
   file = 'file',
-  object='object'
+  object = 'object',
 }
 
 export enum ContentStyle {
   all = 'all',
   onlyModel = 'onlyModel',
-  onlyApi='onlyApi'
+  onlyApi = 'onlyApi',
 }

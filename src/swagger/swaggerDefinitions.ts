@@ -8,6 +8,7 @@ import { MethodPath, Swagger, SwaggerParameter } from '../models/swagger'
 import { ParameterIn } from '../models/swaggerEnum'
 import { getModelTemp } from './template'
 import ejs from 'ejs'
+import { logger } from '../utils/log'
 
 // 获取parameter信息
 export const getParameterInfo = (
@@ -81,7 +82,7 @@ export const getParameterSchema = (
   if (parameterName.includes('«')) {
     // 独立实体
   } else {
-    cache.parameters.push(parameterName)
+    //cache.parameters.push(parameterName)
 
     // 缓存后，给API使用
     apiCache.parameters!.push({
@@ -385,7 +386,7 @@ export const getResponseContent = (
       cache
     )
   } catch (err) {
-    console.info(
+    logger.error(
       'getResponseContent',
       JSON.stringify({
         url: methodPath.url,
