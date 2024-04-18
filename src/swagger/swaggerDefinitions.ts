@@ -95,7 +95,10 @@ export const getParameterSchema = (
     return
   }
   // 处理过的实体跳过
-  if (cache.parameters.includes(parameterName)) {
+  if (
+    cache.parameters.includes(parameterName) ||
+    cache.responses.includes(parameterName)
+  ) {
     return
   }
 
@@ -142,7 +145,11 @@ export const getParameterContent = (
     return
   }
 
-  if (!parameterName || cache.parameters.includes(parameterName)) {
+  if (
+    !parameterName ||
+    cache.parameters.includes(parameterName) ||
+    cache.responses.includes(parameterName)
+  ) {
     return
   }
 
@@ -215,7 +222,11 @@ export const setParameterDefinitionRef = (
         typeName = property.items.type
       }
 
-      if (!typeName || cache.parameters.includes(typeName)) {
+      if (
+        !typeName ||
+        cache.parameters.includes(typeName) ||
+        cache.responses.includes(typeName)
+      ) {
         continue
       }
 
@@ -339,7 +350,10 @@ export const getResponseSchema = (
     return
   }
   // 处理过的实体跳过
-  if (cache.responses.includes(responseName)) {
+  if (
+    cache.responses.includes(responseName) ||
+    cache.parameters.includes(responseName)
+  ) {
     return
   }
 
@@ -516,7 +530,10 @@ export const setResponseNestObject = (
   const allResponseKeys = Object.keys(swaggerInfo.definitions)
   while (count < strArr.length) {
     const nextResponseName = getNextResponseName(responseName, count)
-    if (cache.responses.includes(nextResponseName)) {
+    if (
+      cache.responses.includes(nextResponseName) ||
+      cache.parameters.includes(nextResponseName)
+    ) {
       count = count + 1
     } else {
       const findItem = allResponseKeys.find((item) => item === nextResponseName)
@@ -566,7 +583,11 @@ export const setResponseDefinitionRef = (
       typeName = property.items.type
     }
 
-    if (!typeName || cache.responses.includes(typeName)) {
+    if (
+      !typeName ||
+      cache.responses.includes(typeName) ||
+      cache.parameters.includes(typeName)
+    ) {
       continue
     }
 

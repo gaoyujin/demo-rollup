@@ -205,7 +205,7 @@ export const getModelContent = (
     const methodInfo = listMethods[i]
     const methodPath = setPathData(methodInfo)
     const apiCache = initApiParameter(methodPath, configData)
-
+    
     // 获取参数的实体信息
     getParameterInfo(swaggerInfo, methodPath, cache, apiCache)
     if (
