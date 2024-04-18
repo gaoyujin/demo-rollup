@@ -76,6 +76,16 @@ export const getParameterSchema = (
 
   const refStr = parameter.schema.$ref
   if (!refStr) {
+    const type = parameter.schema.type
+    if (type) {
+      // 缓存后，给API使用
+      apiCache.parameters!.push({
+        required: parameter.required,
+        name: parameter.name,
+        model: type,
+        in: parameter.in,
+      })
+    }
     return
   }
 

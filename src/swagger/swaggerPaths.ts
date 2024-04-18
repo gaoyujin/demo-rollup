@@ -419,6 +419,7 @@ export const getImportContent = (
         cacheApi.parameters[i].model === 'number' ||
         cacheApi.parameters[i].model === 'null' ||
         cacheApi.parameters[i].model === 'integer' ||
+        cacheApi.parameters[i].model === 'object' ||
         (', ' + importHtml + ',').includes(
           ', ' + cacheApi.parameters[i].model + ','
         )
@@ -439,6 +440,7 @@ export const getImportContent = (
     cacheApi.responseName !== 'number' &&
     cacheApi.responseName !== 'null' &&
     cacheApi.responseName !== 'integer' &&
+    cacheApi.responseName !== 'object' &&
     cacheApi.responseName !== 'void' &&
     !(', ' + importHtml + ',').includes(', ' + cacheApi.responseName + ',')
   ) {
