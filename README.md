@@ -4,8 +4,6 @@
 
 ## 工具介绍
 
-工具介绍
-
 - 目前只支持 swagger 2.0
 - 可以选择生成相关的文件，包含 model、api、apiHook
 
