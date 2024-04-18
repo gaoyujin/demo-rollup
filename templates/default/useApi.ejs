@@ -5,12 +5,13 @@
 export const use<%=data.useTitle %> = async (<% if(data.parameters && data.parameters.length>0) {%><% for (let i = 0; i < data.parameters.length; i++) {%><%=data.parameters[i].name %><%=data.parameters[i].required ? '' : '?' %>: <%=data.parameters[i].model %>, <% } %><% } %>config?: any): Promise<<%-data.responseName%> | undefined> => {
   try {
     const result = await <%=data.methodTitle %>(<% if(data.parameters && data.parameters.length>0) {%><% for (let i = 0; i < data.parameters.length; i++) {%><%=data.parameters[i].name %>, <% } %><% } %><% if(!data.parameters || data.parameters.length<1) {%>{},<% } %>config);
-    if (result.resultCode.toUpperCase() != "SUCCESS") {
+    <% if(data.result) {%>if (result.resultCode.toUpperCase() != "SUCCESS") {
       errorMessage("<%=data.summary %>操作失败，原因：" + result.errorCodeDes);
       return undefined;
     } else {
       return result;
-    }
+    }<% }%><% if(!data.result) {%>
+    return result;<% }%>
   } catch (e) {
     errorMessage("<%=data.summary %>操作失败，信息：" + e.message);
     return undefined;

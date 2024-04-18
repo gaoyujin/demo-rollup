@@ -121,6 +121,7 @@ export const initApiParameter = (
 
   apiCache.method = methodPath.method
   apiCache.url = methodPath.url
+  apiCache.relUrl = methodPath.url?.replace('{', '${')
   apiCache.summary = methodPath.data!.summary
   apiCache.methodTitle = getApiName(methodPath, configData)
 
@@ -143,7 +144,7 @@ export const getApiName = (
     let result = ''
     if (arrUrl!.length < level) {
       for (let i = 0; i < arrUrl!.length; i++) {
-        const str = arrUrl![i]
+        const str = arrUrl![i].replace('{', '').replace('}', '')
         if (i === 0) {
           result = str
         } else {
@@ -153,6 +154,8 @@ export const getApiName = (
     } else {
       for (let i = 0; i < level; i++) {
         const str = arrUrl![arrUrl!.length - i - 1]
+          .replace('{', '')
+          .replace('}', '')
         if (i === level - 1) {
           result = str + result
         } else {
@@ -386,12 +389,14 @@ export const getApiContent = (
 
   // 添加api 顶部的import
   const importPath = configData.runDataInfo!.importPath + '/' + controllerName
-  const importResultHtml =
-    'import { ' +
-    importHtml +
-    " } from '" +
-    importPath +
-    "' \r\n" +
+
+  let importResultHtml = ''
+  if (importHtml) {
+    importResultHtml =
+      'import { ' + importHtml + " } from '" + importPath + "' \r\n"
+  }
+  importResultHtml =
+    importResultHtml +
     configData.fileSettings!.axiosImportContent +
     ' \r\n\r\n' +
     'export const DOMAIN = ""; \r\n\r\n'
@@ -409,6 +414,11 @@ export const getImportContent = (
   if (cacheApi.parameters && cacheApi.parameters.length > 0) {
     for (let i = 0; i < cacheApi.parameters.length; i++) {
       if (
+        cacheApi.parameters[i].model === 'string' ||
+        cacheApi.parameters[i].model === 'boolean' ||
+        cacheApi.parameters[i].model === 'number' ||
+        cacheApi.parameters[i].model === 'null' ||
+        cacheApi.parameters[i].model === 'integer' ||
         (', ' + importHtml + ',').includes(
           ', ' + cacheApi.parameters[i].model + ','
         )
@@ -524,17 +534,23 @@ export const getApiHookContent = (
   const importPath = configData.runDataInfo!.importPath + '/' + controllerName
   const hookImportPath =
     configData.runDataInfo!.hookImportPath + '/' + controllerName
-  const importResultHtml =
-    'import { ' +
-    importHtml +
-    " } from '" +
-    importPath +
-    "' \r\n" +
-    'import { ' +
-    hookImportHtml +
-    " } from '" +
-    hookImportPath +
-    "' \r\n" +
+
+  let importResultHtml = ''
+  if (importHtml) {
+    importResultHtml =
+      'import { ' + importHtml + " } from '" + importPath + "' \r\n"
+  }
+  if (hookImportHtml) {
+    importResultHtml =
+      importResultHtml +
+      'import { ' +
+      hookImportHtml +
+      " } from '" +
+      hookImportPath +
+      "' \r\n"
+  }
+  importResultHtml =
+    importResultHtml +
     configData.fileSettings!.messageImportContent +
     ' \r\n\r\n'
 

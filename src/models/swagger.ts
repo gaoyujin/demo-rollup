@@ -87,13 +87,16 @@ export type ApiParameter = {
   required?: boolean
   name?: string
   model?: string
+  in?: ParameterIn
 }
 
 export type ApiCacheData = {
   summary?: string
   url?: string
+  relUrl?: string
   method?: string
   methodTitle?: string
+  result?: boolean
   useTitle?: string
   parameters?: ApiParameter[]
   responseName?: string

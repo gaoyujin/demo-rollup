@@ -47,6 +47,16 @@ export const getParameterInfo = (
     if (params.in === ParameterIn.body && params.schema) {
       getParameterSchema(params, swaggerInfo, methodPath, cache, apiCache)
     }
+
+    if (params.in === ParameterIn.path) {
+      // 缓存后，给API使用
+      apiCache.parameters!.push({
+        required: params.required,
+        name: params.name,
+        model: params.type,
+        in: params.in,
+      })
+    }
   }
 
   return
@@ -89,6 +99,7 @@ export const getParameterSchema = (
       required: parameter.required,
       name: parameter.name,
       model: parameterName,
+      in: parameter.in,
     })
 
     getParameterContent(
@@ -264,7 +275,7 @@ export const getResponseInfo = (
       // 缓存后，给API使用
       apiCache.responseName = setApiResponseName(response)
 
-      getResponseSchema(response, swaggerInfo, methodPath, cache)
+      getResponseSchema(response, swaggerInfo, methodPath, cache, apiCache)
     }
   }
 
@@ -300,7 +311,8 @@ export const getResponseSchema = (
   response: ResponseInfo,
   swaggerInfo: Swagger,
   methodPath: MethodPath,
-  cache: DataCache
+  cache: DataCache,
+  apiCache: ApiCacheData
 ) => {
   if (!response.schema) {
     return
@@ -324,7 +336,14 @@ export const getResponseSchema = (
   if (responseName.includes('«')) {
     // 独立实体
     cache.responses.push(responseName)
-    getResponseContent(responseName, response, swaggerInfo, methodPath, cache)
+    getResponseContent(
+      responseName,
+      response,
+      swaggerInfo,
+      methodPath,
+      cache,
+      apiCache
+    )
 
     // 获取下一层的返回实体名称
     setResponseNestObject(
@@ -332,11 +351,19 @@ export const getResponseSchema = (
       response,
       methodPath,
       swaggerInfo,
-      cache
+      cache,
+      apiCache
     )
   } else {
     cache.responses.push(responseName)
-    getResponseContent(responseName, response, swaggerInfo, methodPath, cache)
+    getResponseContent(
+      responseName,
+      response,
+      swaggerInfo,
+      methodPath,
+      cache,
+      apiCache
+    )
   }
 }
 
@@ -346,7 +373,8 @@ export const getResponseContent = (
   response: ResponseInfo,
   swaggerInfo: Swagger,
   methodPath: MethodPath,
-  cache: DataCache
+  cache: DataCache,
+  apiCache: ApiCacheData
 ) => {
   if (
     !swaggerInfo.definitions ||
@@ -366,6 +394,17 @@ export const getResponseContent = (
   }
   try {
     const fileTemp = getModelTemp()
+
+    // 设置返回对象
+    if (
+      definition.properties &&
+      definition.properties.hasOwnProperty('resultCode')
+    ) {
+      apiCache.result = true
+    } else {
+      apiCache.result = false
+    }
+
     const realName = getResponseName(responseName)
     const strHtml = ejs.render(fileTemp, {
       url: methodPath.url,
@@ -459,7 +498,8 @@ export const setResponseNestObject = (
   response: ResponseInfo,
   methodPath: MethodPath,
   swaggerInfo: Swagger,
-  cache: DataCache
+  cache: DataCache,
+  apiCache: ApiCacheData
 ) => {
   const strArr = responseName.split('«')
   let count = 1
@@ -478,7 +518,8 @@ export const setResponseNestObject = (
           response,
           swaggerInfo,
           methodPath,
-          cache
+          cache,
+          apiCache
         )
       }
       count = count + 1
