@@ -22,7 +22,7 @@ export default [
           { src: './package.json', dest: 'dist' },
         ],
       }),
-      // terser(),
+      terser(),
     ],
     output: [
       {
