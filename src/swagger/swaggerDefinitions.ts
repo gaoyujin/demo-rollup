@@ -35,11 +35,12 @@ export const getParameterInfo = (
 
     // query 类型的参数
     if (params.in === ParameterIn.query) {
-      if (methodPath.url!.includes('&')) {
-        methodPath.url =
-          methodPath.url + '?' + params.name + '=${' + params.name + '}'
+      if (apiCache.relUrl!.includes('&')) {
+        apiCache.relUrl =
+          apiCache.relUrl + '?' + params.name + '=${' + params.name + '}'
       } else {
-        methodPath.url = methodPath.url + '&' + params.name
+        apiCache.relUrl =
+          apiCache.relUrl + '&' + params.name + '=${' + params.name + '}'
       }
     }
 
@@ -48,12 +49,22 @@ export const getParameterInfo = (
       getParameterSchema(params, swaggerInfo, methodPath, cache, apiCache)
     }
 
-    if (params.in === ParameterIn.path) {
+    if (params.in === ParameterIn.path || params.in === ParameterIn.query) {
       // 缓存后，给API使用
       apiCache.parameters!.push({
         required: params.required,
         name: params.name,
         model: params.type,
+        in: params.in,
+      })
+    }
+    
+    if (params.in === ParameterIn.formData) {
+      // 缓存后，给API使用
+      apiCache.formData!.push({
+        required: params.required,
+        name: params.name,
+        model: params.type === 'file' ? 'File' : params.type,
         in: params.in,
       })
     }

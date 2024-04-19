@@ -99,5 +99,6 @@ export type ApiCacheData = {
   result?: boolean
   useTitle?: string
   parameters?: ApiParameter[]
+  formData?: ApiParameter[]
   responseName?: string
 }

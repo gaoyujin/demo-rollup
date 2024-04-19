@@ -1,6 +1,6 @@
 {
   "name": "swagger2-tools",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "dist/index.cjs",
   "type": "module",
@@ -15,8 +15,7 @@
     "s2t": "dist/index.cjs"
   },
   "files": [
-    "dist",
-    "templates"
+    "dist"
   ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",

@@ -7,7 +7,6 @@ import {
   SwaggerMethod,
 } from '../models/swagger'
 import { DefineConfig } from '../models/swaggerConfig'
-import { ParameterIn } from '../models/swaggerEnum'
 import {
   capitalizeFirstLetter,
   getParameterInfo,
@@ -69,42 +68,6 @@ export const getControllerPaths = (
   return true
 }
 
-// 创建parameter的model
-export const createParameterModel = (methodPath: MethodPath): string => {
-  let content = ''
-  if (!methodPath.data) {
-    console.error('methodPath.data is null')
-    return content
-  }
-  if (!methodPath.data.parameters) {
-    console.error('methodPath.data.parameters is null')
-    return content
-  }
-
-  for (let i = 0; i < methodPath.data.parameters.length; i++) {
-    const params = methodPath.data.parameters[i]
-    if (params.in === ParameterIn.empty || params.in === ParameterIn.header) {
-      continue
-    }
-
-    // query 类型的参数
-    if (params.in === ParameterIn.query) {
-      if (methodPath.url!.includes('&')) {
-        methodPath.url =
-          methodPath.url + '?' + params.name + '=${' + params.name + '}'
-      } else {
-        methodPath.url = methodPath.url + '&' + params.name
-      }
-    }
-
-    // body 类型的参数
-    if (params.in === ParameterIn.body) {
-    }
-  }
-
-  return content
-}
-
 // 初始化API的参数内容
 export const initApiParameter = (
   methodPath: MethodPath,
@@ -116,6 +79,7 @@ export const initApiParameter = (
     method: '',
     methodTitle: '',
     parameters: [],
+    formData: [],
     responseName: '',
   }
 
@@ -205,7 +169,7 @@ export const getModelContent = (
     const methodInfo = listMethods[i]
     const methodPath = setPathData(methodInfo)
     const apiCache = initApiParameter(methodPath, configData)
-    
+
     // 获取参数的实体信息
     getParameterInfo(swaggerInfo, methodPath, cache, apiCache)
     if (
@@ -371,6 +335,9 @@ export const getApiContent = (
     }
 
     const fileTemp = getApiTemp()
+
+    // 把必填的元素排到前面
+    sortApiParameter(apiData)
     const strHtml = ejs.render(fileTemp, {
       data: apiData,
     })
@@ -402,6 +369,27 @@ export const getApiContent = (
     'export const DOMAIN = ""; \r\n\r\n'
 
   return importResultHtml + resultHtml
+}
+
+// 把必填的元素排到前面
+export const sortApiParameter = (apiData: ApiCacheData) => {
+  if (apiData.parameters && apiData.parameters.length > 0) {
+    const requiredParameter = apiData.parameters.filter((item) => item.required)
+    const notRequiredParameter = apiData.parameters.filter(
+      (item) => !item.required
+    )
+
+    apiData.parameters = [...requiredParameter, ...notRequiredParameter]
+  }
+
+  if (apiData.formData && apiData.formData.length > 0) {
+    const requiredFormData = apiData.formData.filter((item) => item.required)
+    const notRequiredFormData = apiData.formData.filter(
+      (item) => !item.required
+    )
+
+    apiData.formData = [...requiredFormData, ...notRequiredFormData]
+  }
 }
 
 // 获取import关联信息
