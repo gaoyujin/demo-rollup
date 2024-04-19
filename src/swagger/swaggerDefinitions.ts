@@ -36,7 +36,7 @@ export const getParameterInfo = (
 
     // query 类型的参数
     if (params.in === ParameterIn.query) {
-      if (apiCache.relUrl!.includes('&')) {
+      if (!apiCache.relUrl!.includes('?')) {
         apiCache.relUrl =
           apiCache.relUrl + '?' + params.name + '=${' + params.name + '}'
       } else {
