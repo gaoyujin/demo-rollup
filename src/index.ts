@@ -1,17 +1,3 @@
-// index.ts
-// import { SwaggerToTypescript } from './swagger'
-
-// new SwaggerToTypescript(
-//   'http://shengxinmanagement.sdptest.shengpay.com/swagger-ui.html#',
-//   () => {
-//     console.log('运行了')
-//   }
-// )
-
-// new SwaggerToTypescript('http://mqmp.sdptest.shengpay.com/doc.html#', () => {
-//   console.log('运行了')
-// })
-
 import { Command } from 'commander'
 import { helpOptions } from './lib/help'
 import { createCommands } from './lib/create'
