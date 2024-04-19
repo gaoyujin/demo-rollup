@@ -4,14 +4,15 @@
  */
 export const <%=data.methodTitle%> = (<% if(data.parameters && data.parameters.length>0) {%><% for (let i = 0; i < data.parameters.length; i++) {%><%=data.parameters[i].name %><%=data.parameters[i].required ? '' : '?' %>: <%=data.parameters[i].model==='integer' ? 'number' : data.parameters[i].model %>, <% } %><% } %><% if(!data.parameters || data.parameters.length<1) {%>data: {},<% } %><% if(data.formData && data.formData.length>0) {%><% for (let i = 0; i < data.formData.length; i++) {%><%=data.formData[i].name %><%=data.formData[i].required ? '' : '?' %>: <%=data.formData[i].model==='integer' ? 'number' : data.formData[i].model %>, <% } %><% } %>config?: any): Promise<<%-data.responseName %>> => {<% if(data.formData && data.formData.length>0) {%>
   let formData = new FormData();<% for (let i = 0; i < data.formData.length; i++) {%><% if(!data.formData[i].name) {%>continue;<% } %>
-  formData.append("<%=data.formData[i].name %>", <%=data.formData[i].name %>);<% } %><% } %>
+  if (<%=data.formData[i].name %>) formData.append("<%=data.formData[i].name %>", <%=data.formData[i].name %>);<% } %><% } %>
   return http.request(
 		"<%=data.method %>", 
 		DOMAIN + `<%-data.relUrl %>`, 
 		{<% if(data.parameters && data.parameters.length>0) {%><% for (let i = 0; i < data.parameters.length; i++) { %>
-			<%=data.parameters[i].name %>,<% } %><% } %>
+			<%=data.parameters[i].name %>,<% } %><% } %><% if(!data.parameters || data.parameters.length<1) {%>
+			data,<% } %>
 			<% if(data.formData && data.formData.length>0) {%>data: formData,
-			headers: { "Content-Type": "multipart/form-data" },<% } %> ...config 
+			headers: { "Content-Type": "multipart/form-data" },<% } %>...config 
 		}
   );
 };
