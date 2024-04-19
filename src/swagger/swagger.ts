@@ -2,7 +2,7 @@ import { ApiCacheData, Swagger, SwaggerInfo } from '../models/swagger'
 import { DefineConfig } from '../models/swaggerConfig'
 import { ContentStyle } from '../models/swaggerEnum'
 // import { logger } from '../utils/log'
-import { accessFile, makeDirSync } from '../utils/file'
+import { accessFile, capitalizeFirstLetter, makeDirSync } from '../utils/file'
 import axios from 'axios'
 import path from 'path'
 import {
@@ -13,6 +13,8 @@ import {
   processRefItem,
 } from './swaggerPaths'
 import { logger } from '../utils/log'
+import { pinyin } from 'pinyin-pro'
+import { containsChinese } from '../utils/pattern'
 
 // 获取真正的swaggerUrl
 export const getSwaggerUrl = (url: string, configData: DefineConfig) => {
@@ -73,7 +75,16 @@ export const getServiceConfigFileName = (
     }
   }
 
-  return serviceName
+  if (containsChinese(serviceName)) {
+    const arrStr = pinyin(serviceName, { toneType: 'none', type: 'array' })
+    let realName = ''
+    for (let i = 0; i < arrStr.length; i++) {
+      realName += capitalizeFirstLetter(arrStr[i])
+    }
+    return realName
+  } else {
+    return serviceName
+  }
 }
 
 // 获取文件生成的路径

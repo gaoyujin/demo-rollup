@@ -8,12 +8,12 @@ import {
 } from '../models/swagger'
 import { DefineConfig } from '../models/swaggerConfig'
 import {
-  capitalizeFirstLetter,
   getParameterInfo,
   getResponseInfo,
   getResponseName,
 } from './swaggerDefinitions'
 import { getApiHookTemp, getApiTemp } from './template'
+import { capitalizeFirstLetter } from '../utils/file'
 
 // 根据tag，获取controller的path
 export const getControllerPaths = (

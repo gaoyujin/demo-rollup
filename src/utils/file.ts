@@ -74,3 +74,8 @@ export const appendFile = (filePath: string, fileContent: string) => {
     })
   })
 }
+
+// 第一个字母变成大写
+export function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}

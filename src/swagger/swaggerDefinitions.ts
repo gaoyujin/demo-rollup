@@ -9,6 +9,7 @@ import { ParameterIn } from '../models/swaggerEnum'
 import { getModelTemp } from './template'
 import ejs from 'ejs'
 import { logger } from '../utils/log'
+import { capitalizeFirstLetter } from '../utils/file'
 
 // 获取parameter信息
 export const getParameterInfo = (
@@ -58,7 +59,7 @@ export const getParameterInfo = (
         in: params.in,
       })
     }
-    
+
     if (params.in === ParameterIn.formData) {
       // 缓存后，给API使用
       apiCache.formData!.push({
@@ -520,11 +521,6 @@ export const getNextResponseName = (responseName: string, level: number) => {
   }
 
   return realName
-}
-
-// 第一个字母变成大写
-export function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 // 设置返回实体嵌套的对象
