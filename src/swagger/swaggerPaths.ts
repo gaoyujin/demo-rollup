@@ -167,7 +167,7 @@ export const getModelContent = (
   }
   for (let i = 0; i < listMethods.length; i++) {
     const methodInfo = listMethods[i]
-    const methodPath = setPathData(methodInfo)
+    const methodPath = setPathData(methodInfo, configData)
     const apiCache = initApiParameter(methodPath, configData)
 
     // 获取参数的实体信息
@@ -212,7 +212,8 @@ export const getModelContent = (
 
 // 设置path信息
 export const setPathData = (
-  methodInfo: Record<string, Record<string, SwaggerMethod>>
+  methodInfo: Record<string, Record<string, SwaggerMethod>>,
+  configData: DefineConfig
 ): MethodPath => {
   let urlData: Record<string, SwaggerMethod> = {}
   let methodData: SwaggerMethod | undefined = undefined
@@ -233,7 +234,13 @@ export const setPathData = (
   if (urlData) {
     for (const key in urlData) {
       if (!methodKey) {
-        methodKey = key.toLocaleUpperCase()
+        // 公司框架，模式改成了小写。所以需要做个配置
+        if (configData.fileSettings!.api.requestMethod === 'upperCase') {
+          methodKey = key.toLocaleUpperCase()
+        } else {
+          methodKey = key.toLocaleLowerCase()
+        }
+
         methodData = urlData[key]
         break
       }
@@ -307,7 +314,7 @@ export const getApiContent = (
   let resultHtml = ''
   for (let i = 0; i < listMethods.length; i++) {
     const methodInfo = listMethods[i]
-    const methodPath = setPathData(methodInfo)
+    const methodPath = setPathData(methodInfo, configData)
 
     if (!cacheApiData) {
       console.error('cacheApiData is null')
@@ -324,7 +331,7 @@ export const getApiContent = (
       continue
     }
 
-    const apiData = findItem[Object.keys(findItem)[0]]
+    const apiData: ApiCacheData = findItem[Object.keys(findItem)[0]]
     if (!apiData) {
       console.error('apiData is not find')
       continue
@@ -371,6 +378,16 @@ export const getApiContent = (
   return importResultHtml + resultHtml
 }
 
+// 设置请求体
+export const setRequestBody = (apiData: ApiCacheData) => {
+  if (apiData && apiData.parameters && apiData.parameters.length > 0) {
+    const requestBody = apiData.parameters.find((item) => item.in === 'body')
+    if (requestBody) {
+      apiData.data = requestBody
+    }
+  }
+}
+
 // 把必填的元素排到前面
 export const sortApiParameter = (apiData: ApiCacheData) => {
   if (apiData.parameters && apiData.parameters.length > 0) {
@@ -380,6 +397,9 @@ export const sortApiParameter = (apiData: ApiCacheData) => {
     )
 
     apiData.parameters = [...requiredParameter, ...notRequiredParameter]
+
+    // 设置data
+    setRequestBody(apiData)
   }
 
   if (apiData.formData && apiData.formData.length > 0) {
@@ -468,7 +488,7 @@ export const getApiHookContent = (
   let resultHtml = ''
   for (let i = 0; i < listMethods.length; i++) {
     const methodInfo = listMethods[i]
-    const methodPath = setPathData(methodInfo)
+    const methodPath = setPathData(methodInfo, configData)
 
     if (!cacheApiData) {
       break

@@ -37,6 +37,7 @@ export type ApiConfig = {
   createMode?: string // 生产文件的模式  add:追加  overwrite:覆盖 默认是覆盖
   nameMode?: string // 生成接口的名称的模式：operationId 、url
   urlLevel?: number // 截取名称的层级 默认是2
+  requestMethod?: string //
 }
 
 // 运行生成的数据

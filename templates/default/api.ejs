@@ -8,10 +8,8 @@ export const <%=data.methodTitle%> = (<% if(data.parameters && data.parameters.l
   return http.request(
 		"<%=data.method %>", 
 		DOMAIN + `<%-data.relUrl %>`, 
-		{<% if(data.parameters && data.parameters.length>0) {%><% for (let i = 0; i < data.parameters.length; i++) { %>
-			<%=data.parameters[i].name %>,<% } %><% } %><% if(!data.parameters || data.parameters.length<1) {%>
-			data,<% } %>
-			<% if(data.formData && data.formData.length>0) {%>data: formData,
+		{
+			<% if(data.data) {%>data: <%=data.data.name%>,<% } %><% if(!data.data && !(data.formData && data.formData.length>0)) {%><% if(!data.parameters || data.parameters.length<1) {%>data: data,<% } %><% if(!(!data.parameters || data.parameters.length<1)) {%>data: {},<% } %>%><% } %><% if(data.formData && data.formData.length>0) {%>data: formData,
 			headers: { "Content-Type": "multipart/form-data" },<% } %>...config 
 		}
   );

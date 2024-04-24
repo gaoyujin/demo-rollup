@@ -100,5 +100,6 @@ export type ApiCacheData = {
   useTitle?: string
   parameters?: ApiParameter[]
   formData?: ApiParameter[]
+  data?: object
   responseName?: string
 }

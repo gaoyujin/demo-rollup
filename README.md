@@ -59,12 +59,13 @@ s2t url http://XXX/swagger-ui.html // 把url对应的swagger生成相关的model
 
 ## ApiConfig 对象 说明
 
-| 属性       | 说明                                                                | 默认值      |
-| ---------- | ------------------------------------------------------------------- | ----------- |
-| dirName    | 实体生成的文件夹名称 默认根目录下"apis"                             | "apis"      |
-| createMode | 生产文件的模式 add:追加 overwrite:覆盖 默认是覆盖（目前追加不支持） | "overwrite" |
-| nameMode   | 生成接口的名称的模式：operationId 、url                             | "url"       |
-| urlLevel   | 截取名称的层级 默认是 2                                             | 2           |
+| 属性          | 说明                                                                | 默认值      |
+| ------------- | ------------------------------------------------------------------- | ----------- |
+| dirName       | 实体生成的文件夹名称 默认根目录下"apis"                             | "apis"      |
+| createMode    | 生产文件的模式 add:追加 overwrite:覆盖 默认是覆盖（目前追加不支持） | "overwrite" |
+| nameMode      | 生成接口的名称的模式：operationId 、url                             | "url"       |
+| urlLevel      | 截取名称的层级 默认是 2                                             | 2           |
+| requestMethod | 请求类型的大小写模式：lowerCase、upperCas                           | lowerCase   |
 
 ## Model 生成代码 demo
 

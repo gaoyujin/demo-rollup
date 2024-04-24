@@ -26,6 +26,7 @@ export const defaultConfig: DefineConfig = {
       createMode: 'overwrite', // 生产文件的模式  add:追加  overwrite:覆盖 默认是覆盖
       nameMode: 'url', // 生成接口的名称的模式：operationId 、url
       urlLevel: 2, // 截取名称的层级 默认是2
+      requestMethod: 'lowerCase',
     },
   }, // 生产文件的操作
   serverNameSettings: [], // 服务文件夹名称映射
