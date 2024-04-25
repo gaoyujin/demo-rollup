@@ -111,6 +111,14 @@ export const getParameterSchema = (
     cache.parameters.includes(parameterName) ||
     cache.responses.includes(parameterName)
   ) {
+    // 缓存后，给API使用。虽然已经生成，但是需要为API添加参数描述
+    apiCache.parameters!.push({
+      required: parameter.required,
+      name: parameter.name,
+      model: parameterName,
+      in: parameter.in,
+    })
+
     return
   }
 
