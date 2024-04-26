@@ -6,7 +6,7 @@
     "content": "all", // 生产文件的内容  all:全部  onlyModel:只生成实体
     "topAlias": "../..", // import 的
     "axiosImportContent": "import { http } from '/@/utils/http'", // axios引用文本
-    "messageImportContent": "import { errorMessage } from '/@/utils/message/index'" // errorMessage函数的引用文本
+    "messageImportContent": "import { errorMessage } from '/@/utils/message/index'", // errorMessage函数的引用文本
     // 接口实体的生成配置
     /* "model": {
       "dirName": "models", // 实体生成的文件夹名称 默认根目录下"models"
@@ -18,6 +18,14 @@
       "nameMode": "url", // 生成接口的名称的模式：operationId 、url
       "urlLevel": 2 // 截取名称的层级 默认是2
     } */
+    "api": {
+      "domainName": [
+        {
+          "name": "", // swagger 的服务名称，一般是中文名称
+          "fileName": "" // 中文不好看，这个是映射英文名称
+        }
+      ] // 多服务是，服务别名映射
+    }
   },
   // 服务文件夹名称映射
   "serverNameSettings": [

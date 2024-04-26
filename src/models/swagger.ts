@@ -103,3 +103,8 @@ export type ApiCacheData = {
   data?: object
   responseName?: string
 }
+
+export type TagsInfoDesc = {
+  paths: string[]
+  pathNames: string[]
+}

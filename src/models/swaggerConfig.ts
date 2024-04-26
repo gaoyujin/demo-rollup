@@ -6,7 +6,7 @@ export type DefineConfig = {
   includeTags?: string[] // 包含的请求路径 （空是所有，配置了，就匹配配置内容）
   excludeTags?: string[] // 排除的请求路径
   fileSettings?: FileSetting // 生产文件的操作
-  serverNameSettings?: ServerNameConfig[] // 服务文件夹名称映射
+  serverNameSettings?: NameMapping[] // 服务文件夹名称映射
   isHttps?: boolean // 是否是https
   runDataInfo?: RunData
 }
@@ -22,7 +22,7 @@ export type FileSetting = {
   api: ApiConfig // api配置
 }
 
-export type ServerNameConfig = {
+export type NameMapping = {
   name?: string
   fileName?: string
 }
@@ -37,7 +37,8 @@ export type ApiConfig = {
   createMode?: string // 生产文件的模式  add:追加  overwrite:覆盖 默认是覆盖
   nameMode?: string // 生成接口的名称的模式：operationId 、url
   urlLevel?: number // 截取名称的层级 默认是2
-  requestMethod?: string //
+  requestMethod?: string // 请求类型的大小写模式：lowerCase、upperCase，默认是lowerCase
+  domainName?: NameMapping[] // 多服务是，服务别名映射
 }
 
 // 运行生成的数据

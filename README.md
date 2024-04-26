@@ -35,7 +35,7 @@ s2t url http://XXX/swagger-ui.html // 把url对应的swagger生成相关的model
 | includeTags        | 包含的 Controller。空是所有，配置了就匹配配置内容(swagger-ui 中 Controller 的中文名称或者英文都支持) | []     |
 | excludeTags        | 排除的 Controller (高优先级)                                                                         | []     |
 | fileSettings       | model 和 Api 生成规则配置(FileSetting 对象)                                                          | {}     |
-| serverNameSettings | swagger 的服务名称(映射英文名称)                                                                     | []     |
+| serverNameSettings | swagger 的服务名称(映射英文名称，NameMapping 对象集合)                                               | []     |
 | isHttps            | 是否使用 https 获取 swagger 信息                                                                     | false  |
 
 ## FileSetting 对象 说明
@@ -65,7 +65,15 @@ s2t url http://XXX/swagger-ui.html // 把url对应的swagger生成相关的model
 | createMode    | 生产文件的模式 add:追加 overwrite:覆盖 默认是覆盖（目前追加不支持） | "overwrite" |
 | nameMode      | 生成接口的名称的模式：operationId 、url                             | "url"       |
 | urlLevel      | 截取名称的层级 默认是 2                                             | 2           |
-| requestMethod | 请求类型的大小写模式：lowerCase、upperCas                           | lowerCase   |
+| requestMethod | 请求类型的大小写模式：lowerCase、upperCase                          | lowerCase   |
+| domainName    | 多服务时，服务别名映射(NameMapping 对象集合)                        | []          |
+
+## NameMapping 对象 说明
+
+| 属性     | 说明                              | 默认值 |
+| -------- | --------------------------------- | ------ |
+| name     | swagger 的 info 属性的 title 内容 | ""     |
+| fileName | 映射的内容或者名称                | ""     |
 
 ## Model 生成代码 demo
 

@@ -347,6 +347,35 @@ export const setApiResponseName = (response: ResponseInfo) => {
   return 'void'
 }
 
+// 配置被跳过的返回对象的信息
+export const setContinueResponseInfo = (
+  swaggerInfo: Swagger,
+  responseName: string,
+  apiCache: ApiCacheData
+) => {
+  if (
+    !swaggerInfo.definitions ||
+    Object.keys(swaggerInfo.definitions).length < 1
+  ) {
+    return
+  }
+
+  const definition = swaggerInfo.definitions[responseName]
+  if (!definition) {
+    return
+  }
+
+  // 设置返回对象
+  if (
+    definition.properties &&
+    definition.properties.hasOwnProperty('resultCode')
+  ) {
+    apiCache.result = true
+  } else {
+    apiCache.result = false
+  }
+}
+
 // 返回的实体对象
 export const getResponseSchema = (
   response: ResponseInfo,
@@ -374,6 +403,8 @@ export const getResponseSchema = (
     cache.responses.includes(responseName) ||
     cache.parameters.includes(responseName)
   ) {
+    // 补偿返回对象的扩展信息
+    setContinueResponseInfo(swaggerInfo, responseName, apiCache)
     return
   }
 

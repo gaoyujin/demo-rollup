@@ -26,7 +26,8 @@ export const defaultConfig: DefineConfig = {
       createMode: 'overwrite', // 生产文件的模式  add:追加  overwrite:覆盖 默认是覆盖
       nameMode: 'url', // 生成接口的名称的模式：operationId 、url
       urlLevel: 2, // 截取名称的层级 默认是2
-      requestMethod: 'lowerCase',
+      requestMethod: 'lowerCase', // 请求类型的大小写模式：lowerCase、upperCase，默认是lowerCase
+      domainName: [], // 多服务时，服务别名映射
     },
   }, // 生产文件的操作
   serverNameSettings: [], // 服务文件夹名称映射
@@ -75,13 +76,49 @@ export function writeConfigInfo(
       ? settingInfo.serverNameSettings
       : configData.serverNameSettings
 
-    configData.fileSettings!.api = settingInfo.fileSettings?.api
-      ? settingInfo.fileSettings?.api
-      : configData.fileSettings!.api
+    if (settingInfo.fileSettings?.api) {
+      configData.fileSettings!.api.createMode = settingInfo.fileSettings?.api
+        .createMode
+        ? settingInfo.fileSettings?.api.createMode
+        : configData.fileSettings!.api.createMode
 
-    configData.fileSettings!.model = settingInfo.fileSettings?.model
-      ? settingInfo.fileSettings?.model
-      : configData.fileSettings!.model
+      configData.fileSettings!.api.dirName = settingInfo.fileSettings?.api
+        .dirName
+        ? settingInfo.fileSettings?.api.dirName
+        : configData.fileSettings!.api.dirName
+
+      configData.fileSettings!.api.domainName = settingInfo.fileSettings?.api
+        .domainName
+        ? settingInfo.fileSettings?.api.domainName
+        : configData.fileSettings!.api.domainName
+
+      configData.fileSettings!.api.nameMode = settingInfo.fileSettings?.api
+        .nameMode
+        ? settingInfo.fileSettings?.api.nameMode
+        : configData.fileSettings!.api.nameMode
+
+      configData.fileSettings!.api.requestMethod = settingInfo.fileSettings?.api
+        .requestMethod
+        ? settingInfo.fileSettings?.api.requestMethod
+        : configData.fileSettings!.api.requestMethod
+
+      configData.fileSettings!.api.urlLevel = settingInfo.fileSettings?.api
+        .urlLevel
+        ? settingInfo.fileSettings?.api.urlLevel
+        : configData.fileSettings!.api.urlLevel
+    }
+
+    if (settingInfo.fileSettings?.model) {
+      configData.fileSettings!.model.createMode = settingInfo.fileSettings
+        ?.model.createMode
+        ? settingInfo.fileSettings?.model.createMode
+        : configData.fileSettings!.model.createMode
+
+      configData.fileSettings!.model.dirName = settingInfo.fileSettings?.model
+        .dirName
+        ? settingInfo.fileSettings?.model.dirName
+        : configData.fileSettings!.model.dirName
+    }
 
     configData.fileSettings!.topAlias = settingInfo.fileSettings?.topAlias
       ? settingInfo.fileSettings?.topAlias

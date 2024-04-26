@@ -369,13 +369,41 @@ export const getApiContent = (
     importResultHtml =
       'import { ' + importHtml + " } from '" + importPath + "' \r\n"
   }
+
+  const domainName = getDomainMapContent(swaggerInfo, configData)
   importResultHtml =
     importResultHtml +
     configData.fileSettings!.axiosImportContent +
     ' \r\n\r\n' +
-    'export const DOMAIN = ""; \r\n\r\n'
+    'export const DOMAIN = "' +
+    domainName +
+    '"; \r\n\r\n'
 
   return importResultHtml + resultHtml
+}
+
+// 获取domain的映射信息
+export const getDomainMapContent = (
+  swaggerInfo: Swagger,
+  configData: DefineConfig
+) => {
+  // domainName
+  let domain = ''
+
+  if (
+    configData.fileSettings?.api &&
+    configData.fileSettings?.api.domainName &&
+    configData.fileSettings?.api.domainName.length > 0
+  ) {
+    const filter = configData.fileSettings?.api.domainName.find(
+      (item) => item.name === swaggerInfo.info.title
+    )
+    if (filter && filter.fileName) {
+      domain = filter.fileName
+    }
+  }
+
+  return domain
 }
 
 // 设置请求体

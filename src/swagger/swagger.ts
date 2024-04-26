@@ -1,4 +1,9 @@
-import { ApiCacheData, Swagger, SwaggerInfo } from '../models/swagger'
+import {
+  ApiCacheData,
+  Swagger,
+  SwaggerInfo,
+  TagsInfoDesc,
+} from '../models/swagger'
 import { DefineConfig } from '../models/swaggerConfig'
 import { ContentStyle } from '../models/swaggerEnum'
 // import { logger } from '../utils/log'
@@ -176,7 +181,7 @@ export const createServiceDir = (
 export const getTagsData = (swaggerInfo: Swagger, configData: DefineConfig) => {
   const pathsType: string[] = []
   const pathNamesType: string[] = []
-  const result = {
+  const result: TagsInfoDesc = {
     paths: pathsType,
     pathNames: pathNamesType,
   }
