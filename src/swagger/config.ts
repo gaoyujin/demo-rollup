@@ -124,6 +124,16 @@ export function writeConfigInfo(
       ? settingInfo.fileSettings?.topAlias
       : configData.fileSettings!.topAlias
 
+    configData.fileSettings!.axiosImportContent = settingInfo.fileSettings
+      ?.axiosImportContent
+      ? settingInfo.fileSettings?.axiosImportContent
+      : configData.fileSettings!.axiosImportContent
+
+    configData.fileSettings!.messageImportContent = settingInfo.fileSettings
+      ?.messageImportContent
+      ? settingInfo.fileSettings?.messageImportContent
+      : configData.fileSettings!.messageImportContent
+
     configData.fileSettings!.topDirPath = settingInfo.fileSettings?.topDirPath
       ? settingInfo.fileSettings?.topDirPath
       : configData.fileSettings!.topDirPath
