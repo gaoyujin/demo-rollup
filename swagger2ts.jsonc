@@ -1,12 +1,12 @@
 {
   /* "swaggerVersion": "2.0", // 支持的swagger版本 */
-  "includeTags": [], // 包含的Controller (空是所有，配置了，就匹配配置内容)
+  "includeTags": ["Gateway Proxy Route Controller"], // 包含的Controller (空是所有，配置了，就匹配配置内容)
   "excludeTags": [], // 排除的Controller (高优先级)
   "fileSettings": {
     "content": "all", // 生产文件的内容  all:全部  onlyModel:只生成实体
     "topAlias": "../..", // import 的
-    "axiosImportContent": "import { http } from '/@/utils/http'", // axios引用文本
-    "messageImportContent": "import { errorMessage } from '/@/utils/message/index'", // errorMessage函数的引用文本
+    "axiosImportContent": "import { http } from '...../DDDDDDDDDD/utils/http'", // axios引用文本
+    "messageImportContent": "import { errorMessage } from './../BBBBBBBBBB/message/index'", // errorMessage函数的引用文本
     // 接口实体的生成配置
     /* "model": {
       "dirName": "models", // 实体生成的文件夹名称 默认根目录下"models"
@@ -33,6 +33,9 @@
       "name": "", // swagger 的服务名称，一般是中文名称
       "fileName": "" // 中文不好看，这个是映射英文名称
     }
-  ]
+  ],
+  "nodeServe": {
+    "url": "http://10.241.81.35:7001" // 请求的地址
+  }
   /* "isHttps": false // 是否使用https */
 }

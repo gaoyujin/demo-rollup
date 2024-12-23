@@ -11,7 +11,7 @@ export const initConfig = () => {
 }
 
 // 根据swagger，创建相关代码
-export const createCode = async (swaggerUrl: string) => {
+export const createCode = async (swaggerUrl: string, cmd: any[]) => {
   try {
     // 1.提示信息
     console.info('根据swaggerUrl创建代码开始......')
@@ -22,7 +22,7 @@ export const createCode = async (swaggerUrl: string) => {
     }
 
     // 调用处理函数
-    new SwaggerToTypescript(swaggerUrl, () => {
+    new SwaggerToTypescript(swaggerUrl, cmd, () => {
       console.info('解析运行了......')
     })
   } catch (err) {

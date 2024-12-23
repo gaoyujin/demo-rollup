@@ -8,7 +8,15 @@ export type DefineConfig = {
   fileSettings?: FileSetting // 生产文件的操作
   serverNameSettings?: NameMapping[] // 服务文件夹名称映射
   isHttps?: boolean // 是否是https
+  nodeServe?: NodeServeType
   runDataInfo?: RunData
+}
+
+export type NodeServeType = {
+  url: string
+  serverData?: any
+  controllerData?: any[]
+  methodData?: any[]
 }
 
 export type FileSetting = {

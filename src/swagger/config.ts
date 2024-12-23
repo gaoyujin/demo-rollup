@@ -32,6 +32,9 @@ export const defaultConfig: DefineConfig = {
   }, // 生产文件的操作
   serverNameSettings: [], // 服务文件夹名称映射
   isHttps: false, // 是否使用https
+  nodeServe: {
+    url: '',
+  },
   runDataInfo: {
     modelPath: '',
     apiPath: '',
@@ -118,6 +121,10 @@ export function writeConfigInfo(
         .dirName
         ? settingInfo.fileSettings?.model.dirName
         : configData.fileSettings!.model.dirName
+    }
+
+    if (settingInfo.nodeServe && settingInfo.nodeServe.url) {
+      configData.nodeServe!.url = settingInfo.nodeServe.url
     }
 
     configData.fileSettings!.topAlias = settingInfo.fileSettings?.topAlias
